@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://motelswipe-mysql-dev-motelswipe-dev.a.aivencloud.com:16374/url_shortener?sslMode=REQUIRED&serverTimezone=UTC
     username: avnadmin
-    password: AVNS__BlYLRKsI4omsHg-p8M
+    password: AVNS_BOGK1Is7SOMOFT3UkUN
     hikari:
       connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT_MS:3000}
       validation-timeout: ${DB_POOL_VALIDATION_TIMEOUT_MS:1000}
