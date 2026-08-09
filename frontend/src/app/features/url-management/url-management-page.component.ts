@@ -33,7 +33,7 @@ import {
 import { UrlApiService } from '../../core/api/url-api.service';
 import {
   FrontendApiError,
-  isFrontendApiError,
+  toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -121,7 +121,7 @@ export class UrlManagementPageComponent {
             catchError((error: unknown) =>
               of<LoadResult>({
                 page: null,
-                error: toFrontendError(
+                error: toFrontendApiError(
                   error,
                   'The URL list could not be loaded.',
                 ),
@@ -411,7 +411,7 @@ export class UrlManagementPageComponent {
     error: unknown,
   ): void {
     this.mutationError.set(
-      toFrontendError(
+      toFrontendApiError(
         error,
         'The URL could not be changed.',
       ),
@@ -588,24 +588,4 @@ function compactQueryParams(
   }
 
   return params;
-}
-
-function toFrontendError(
-  error: unknown,
-  message: string,
-): FrontendApiError {
-  if (
-    isFrontendApiError(error)
-  ) {
-    return error;
-  }
-
-  return new FrontendApiError(
-    0,
-    'NETWORK_ERROR',
-    message,
-    null,
-    [],
-    null,
-  );
 }

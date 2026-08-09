@@ -40,12 +40,7 @@
       <article class="metric-card">
         <div class="metric-card__header">
           <span class="metric-icon metric-icon--primary">
-            <svg
-              lucideIcon="link-2"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            ></svg>
+            <i class="bi bi-link-45deg" aria-hidden="true"></i>
           </span>
 
           <span class="metric-label">
@@ -65,16 +60,11 @@
       <article class="metric-card">
         <div class="metric-card__header">
           <span class="metric-icon metric-icon--success">
-            <svg
-              lucideIcon="circle-check"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            ></svg>
+            <i class="bi bi-check-circle" aria-hidden="true"></i>
           </span>
 
           <span class="metric-label">
-            Active
+            Enabled
           </span>
         </div>
 
@@ -83,19 +73,14 @@
         </p>
 
         <p class="metric-description">
-          Currently enabled records
+          Enabled lifecycle status
         </p>
       </article>
 
       <article class="metric-card">
         <div class="metric-card__header">
           <span class="metric-icon metric-icon--warning">
-            <svg
-              lucideIcon="ban"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            ></svg>
+            <i class="bi bi-slash-circle" aria-hidden="true"></i>
           </span>
 
           <span class="metric-label">
@@ -115,12 +100,7 @@
       <article class="metric-card">
         <div class="metric-card__header">
           <span class="metric-icon metric-icon--danger">
-            <svg
-              lucideIcon="clock-3"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            ></svg>
+            <i class="bi bi-clock-history" aria-hidden="true"></i>
           </span>
 
           <span class="metric-label">
@@ -155,12 +135,7 @@
         >
           View all
 
-          <svg
-            lucideIcon="arrow-right"
-            width="16"
-            height="16"
-            aria-hidden="true"
-          ></svg>
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
         </a>
       </header>
 
@@ -173,12 +148,7 @@
             class="button"
             routerLink="/urls/new"
           >
-            <svg
-              lucideIcon="plus"
-              width="18"
-              height="18"
-              aria-hidden="true"
-            ></svg>
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
 
             Create URL
           </a>
@@ -233,114 +203,13 @@
                   [routerLink]="['/urls', url.id]"
                   [attr.aria-label]="'View ' + url.shortCode"
                 >
-                  <svg
-                    lucideIcon="arrow-right"
-                    width="17"
-                    height="17"
-                    aria-hidden="true"
-                  ></svg>
+                  <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </a>
               </div>
             </article>
           }
         </div>
       }
-    </section>
-
-    <!-- Quick actions -->
-    <section class="quick-actions">
-      <header class="section-header section-header--plain">
-        <div>
-          <h2>Quick Actions</h2>
-
-          <p>
-            Common tasks for managing your links.
-          </p>
-        </div>
-      </header>
-
-      <div class="quick-actions__grid">
-        <a
-          class="quick-action-card"
-          routerLink="/urls/new"
-        >
-          <span class="quick-action-card__icon">
-            <svg
-              lucideIcon="plus"
-              width="21"
-              height="21"
-              aria-hidden="true"
-            ></svg>
-          </span>
-
-          <span class="quick-action-card__content">
-            <strong>Create URL</strong>
-            <small>Create a new shortened link</small>
-          </span>
-
-          <svg
-            lucideIcon="arrow-right"
-            class="quick-action-card__arrow"
-            width="18"
-            height="18"
-            aria-hidden="true"
-          ></svg>
-        </a>
-
-        <a
-          class="quick-action-card"
-          routerLink="/urls"
-        >
-          <span class="quick-action-card__icon">
-            <svg
-              lucideIcon="list-filter"
-              width="21"
-              height="21"
-              aria-hidden="true"
-            ></svg>
-          </span>
-
-          <span class="quick-action-card__content">
-            <strong>Manage URLs</strong>
-            <small>Search and manage existing links</small>
-          </span>
-
-          <svg
-            lucideIcon="arrow-right"
-            class="quick-action-card__arrow"
-            width="18"
-            height="18"
-            aria-hidden="true"
-          ></svg>
-        </a>
-
-        <a
-          class="quick-action-card"
-          routerLink="/analytics"
-        >
-          <span class="quick-action-card__icon">
-            <svg
-              lucideIcon="bar-chart-3"
-              width="21"
-              height="21"
-              aria-hidden="true"
-            ></svg>
-          </span>
-
-          <span class="quick-action-card__content">
-            <strong>Analytics</strong>
-            <small>Explore URL traffic and activity</small>
-          </span>
-
-          <svg
-            lucideIcon="arrow-right"
-            class="quick-action-card__arrow"
-            width="18"
-            height="18"
-            aria-hidden="true"
-          ></svg>
-        </a>
-      </div>
     </section>
   }
 }

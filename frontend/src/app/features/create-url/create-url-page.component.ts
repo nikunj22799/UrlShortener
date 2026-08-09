@@ -23,7 +23,7 @@ import {
 import { UrlApiService } from '../../core/api/url-api.service';
 import {
   FrontendApiError,
-  isFrontendApiError,
+  toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -121,7 +121,7 @@ export class CreateUrlPageComponent {
           );
         },
         error: (error: unknown) => {
-          const frontendError = toFrontendError(
+          const frontendError = toFrontendApiError(
             error,
             'The URL could not be created.',
           );
@@ -269,23 +269,5 @@ function createFieldErrorMap(
       fieldError.field,
       fieldError.message,
     ]),
-  );
-}
-
-function toFrontendError(
-  error: unknown,
-  fallbackMessage: string,
-): FrontendApiError {
-  if (isFrontendApiError(error)) {
-    return error;
-  }
-
-  return new FrontendApiError(
-    0,
-    'NETWORK_ERROR',
-    fallbackMessage,
-    null,
-    [],
-    null,
   );
 }

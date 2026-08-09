@@ -32,8 +32,9 @@ import { AnalyticsApiService } from '../../core/api/analytics-api.service';
 import { UrlApiService } from '../../core/api/url-api.service';
 import {
   FrontendApiError,
-  isFrontendApiError,
+  toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
+import { isUuid } from '../../core/utils/uuid';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
 import { LoadingIndicatorComponent } from '../../shared/components/loading-indicator.component';
@@ -160,7 +161,7 @@ export class AnalyticsPageComponent {
         },
         error: (error: unknown) => {
           this.selectorError.set(
-            toFrontendError(
+            toFrontendApiError(
               error,
               'Recent URLs could not be loaded.',
             ),
@@ -287,7 +288,7 @@ export class AnalyticsPageComponent {
         },
         error: (error: unknown) => {
           this.analyticsError.set(
-            toFrontendError(
+            toFrontendApiError(
               error,
               'Analytics could not be loaded.',
             ),
@@ -374,33 +375,3 @@ function toLocalDateTime(
     .slice(0, 16);
 }
 
-function isUuid(
-  value: string | null,
-): value is string {
-  return (
-    value !== null &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      value,
-    )
-  );
-}
-
-function toFrontendError(
-  error: unknown,
-  message: string,
-): FrontendApiError {
-  if (
-    isFrontendApiError(error)
-  ) {
-    return error;
-  }
-
-  return new FrontendApiError(
-    0,
-    'NETWORK_ERROR',
-    message,
-    null,
-    [],
-    null,
-  );
-}

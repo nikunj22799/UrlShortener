@@ -11,7 +11,7 @@ public final class TestProperties {
                 URI.create("http://localhost:8080"),
                 new ApplicationProperties.ShortCode(8, 5),
                 new ApplicationProperties.Pagination(20, 100),
-                new ApplicationProperties.Analytics(7, 90, 7, 10, 100, 90, 5_000),
+                new ApplicationProperties.Analytics(7, 90, 7, 10, 100, 5_000),
                 new ApplicationProperties.Idempotency(24, 500),
                 new ApplicationProperties.RateLimit(
                         true,

@@ -24,10 +24,11 @@ import { UrlResponse } from '../../core/api/api.models';
 import { UrlApiService } from '../../core/api/url-api.service';
 import {
   FrontendApiError,
-  isFrontendApiError,
+  toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { isUuid } from '../../core/utils/uuid';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
 import { LoadingIndicatorComponent } from '../../shared/components/loading-indicator.component';
@@ -321,7 +322,7 @@ export class UrlDetailsPageComponent {
 
   private handleLoadError(error: unknown): void {
     this.loadError.set(
-      toFrontendError(
+      toFrontendApiError(
         error,
         'The URL could not be loaded.',
       ),
@@ -332,7 +333,7 @@ export class UrlDetailsPageComponent {
 
   private handleMutationError(error: unknown): void {
     this.mutationError.set(
-      toFrontendError(
+      toFrontendApiError(
         error,
         'The URL could not be changed.',
       ),
@@ -378,40 +379,12 @@ function toLocalDateTime(
     .slice(0, 16);
 }
 
-function isUuid(
-  value: string | null,
-): value is string {
-  return (
-    value !== null &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      value,
-    )
-  );
-}
 
 function invalidUrlIdError(): FrontendApiError {
   return new FrontendApiError(
     400,
     'VALIDATION_ERROR',
     'The URL identifier is malformed.',
-    null,
-    [],
-    null,
-  );
-}
-
-function toFrontendError(
-  error: unknown,
-  message: string,
-): FrontendApiError {
-  if (isFrontendApiError(error)) {
-    return error;
-  }
-
-  return new FrontendApiError(
-    0,
-    'NETWORK_ERROR',
-    message,
     null,
     [],
     null,

@@ -17,7 +17,7 @@ import {
 import { UrlApiService } from '../../core/api/url-api.service';
 import {
   FrontendApiError,
-  isFrontendApiError,
+  toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
@@ -102,7 +102,12 @@ export class DashboardPageComponent {
           this.loading.set(false);
         },
         error: (error: unknown) => {
-          this.error.set(toFrontendError(error));
+          this.error.set(
+            toFrontendApiError(
+              error,
+              'The dashboard could not be loaded.',
+            ),
+          );
           this.loading.set(false);
         },
       });
@@ -122,19 +127,4 @@ function createDashboardData(
     expired: expired.totalElements,
     recent: recent.items,
   };
-}
-
-function toFrontendError(error: unknown): FrontendApiError {
-  if (isFrontendApiError(error)) {
-    return error;
-  }
-
-  return new FrontendApiError(
-    0,
-    'NETWORK_ERROR',
-    'The dashboard could not be loaded.',
-    null,
-    [],
-    null,
-  );
 }

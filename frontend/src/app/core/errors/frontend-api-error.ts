@@ -30,3 +30,20 @@ export function isFrontendApiError(
 ): error is FrontendApiError {
   return error instanceof FrontendApiError;
 }
+export function toFrontendApiError(
+  error: unknown,
+  fallbackMessage: string,
+): FrontendApiError {
+  if (isFrontendApiError(error)) {
+    return error;
+  }
+
+  return new FrontendApiError(
+    0,
+    'NETWORK_ERROR',
+    fallbackMessage,
+    null,
+    [],
+    null,
+  );
+}
