@@ -76,6 +76,7 @@ management:
       show-details: never
 
 server:
+  port: ${PORT:8080}
   shutdown: graceful
   error:
     include-message: never
