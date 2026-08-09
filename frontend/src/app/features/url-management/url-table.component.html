@@ -1,0 +1,372 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Short URL</th>
+        <th scope="col">Destination</th>
+        <th scope="col">Status</th>
+        <th scope="col">Created</th>
+        <th scope="col">Expiration</th>
+
+        <th
+          scope="col"
+          class="actions-column"
+        >
+          <span class="sr-only">
+            Actions
+          </span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (url of urls(); track url.id) {
+        <tr [class.row--busy]="isBusy(url)">
+          <td data-label="Short URL">
+            <div class="short-url-cell">
+              <a
+                class="short-code"
+                [routerLink]="['/urls', url.id]"
+              >
+                {{ url.shortCode }}
+              </a>
+
+              <button
+                class="inline-action"
+                type="button"
+                [disabled]="busyId() !== null"
+                [attr.aria-label]="'Copy short URL ' + url.shortCode"
+                (click)="requestAction('copy', url)"
+              >
+                <i
+                  class="bi bi-copy"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </td>
+
+          <td
+            class="destination-column"
+            data-label="Destination"
+          >
+            <span
+              class="destination"
+              [title]="url.originalUrl"
+            >
+              {{
+                url.originalUrl
+                  | destinationSummary
+              }}
+            </span>
+          </td>
+
+          <td data-label="Status">
+            <app-status-badge
+              [status]="url.status"
+              [expired]="url.expired"
+            />
+          </td>
+
+          <td data-label="Created">
+            <time
+              class="date-value"
+              [attr.datetime]="url.createdAt"
+            >
+              {{
+                url.createdAt
+                  | date: 'MMM d, y'
+              }}
+            </time>
+          </td>
+
+          <td data-label="Expiration">
+            @if (url.expiresAt) {
+              <time
+                class="date-value"
+                [attr.datetime]="url.expiresAt"
+              >
+                {{
+                  url.expiresAt
+                    | date: 'MMM d, y'
+                }}
+              </time>
+            } @else {
+              <span class="no-expiration">
+                Never
+              </span>
+            }
+          </td>
+
+          <td class="actions-column">
+            <div class="row-actions">
+              <a
+                class="quick-row-action"
+                [routerLink]="['/urls', url.id]"
+                [attr.aria-label]="'View details for ' + url.shortCode"
+                title="View details"
+              >
+                <i
+                  class="bi bi-eye"
+                  aria-hidden="true"
+                ></i>
+              </a>
+
+              <a
+                class="quick-row-action"
+                [routerLink]="[
+                  '/urls',
+                  url.id,
+                  'analytics'
+                ]"
+                [attr.aria-label]="'View analytics for ' + url.shortCode"
+                title="View analytics"
+              >
+                <i
+                  class="bi bi-bar-chart"
+                  aria-hidden="true"
+                ></i>
+              </a>
+
+              <div class="menu-container">
+                <button
+                  class="quick-row-action"
+                  type="button"
+                  [disabled]="busyId() !== null"
+                  [attr.aria-expanded]="openMenuId() === url.id"
+                  [attr.aria-controls]="'url-actions-' + url.id"
+                  [attr.aria-label]="'More actions for ' + url.shortCode"
+                  (click)="toggleMenu(url.id)"
+                >
+                  <i
+                    class="bi bi-three-dots"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+
+                @if (openMenuId() === url.id) {
+                  <div
+                    class="action-menu"
+                    [id]="'url-actions-' + url.id"
+                  >
+                    <button
+                      type="button"
+                      (click)="requestAction('copy', url)"
+                    >
+                      <i
+                        class="bi bi-copy"
+                        aria-hidden="true"
+                      ></i>
+
+                      Copy short URL
+                    </button>
+
+                    @if (canEnable(url)) {
+                      <button
+                        type="button"
+                        (click)="requestAction('enable', url)"
+                      >
+                        <i
+                          class="bi bi-play"
+                          aria-hidden="true"
+                        ></i>
+
+                        Enable
+                      </button>
+                    }
+
+                    @if (canDisable(url)) {
+                      <button
+                        type="button"
+                        (click)="requestAction('disable', url)"
+                      >
+                        <i
+                          class="bi bi-pause"
+                          aria-hidden="true"
+                        ></i>
+
+                        Disable
+                      </button>
+                    }
+
+                    @if (canDelete(url)) {
+                      <div
+                        class="menu-divider"
+                        aria-hidden="true"
+                      ></div>
+
+                      <button
+                        class="danger-action"
+                        type="button"
+                        (click)="requestAction('delete', url)"
+                      >
+                        <i
+                          class="bi bi-trash"
+                          aria-hidden="true"
+                        ></i>
+
+                        Delete
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="mobile-list">
+  @for (url of urls(); track url.id) {
+    <article
+      class="url-card"
+      [class.url-card--busy]="isBusy(url)"
+    >
+      <header class="url-card__header">
+        <div>
+          <a
+            class="short-code"
+            [routerLink]="['/urls', url.id]"
+          >
+            {{ url.shortCode }}
+          </a>
+
+          <p
+            class="mobile-destination"
+            [title]="url.originalUrl"
+          >
+            {{
+              url.originalUrl
+                | destinationSummary
+            }}
+          </p>
+        </div>
+
+        <app-status-badge
+          [status]="url.status"
+          [expired]="url.expired"
+        />
+      </header>
+
+      <dl class="url-card__details">
+        <div>
+          <dt>Created</dt>
+
+          <dd>
+            {{
+              url.createdAt
+                | date: 'MMM d, y'
+            }}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Expires</dt>
+
+          <dd>
+            {{
+              url.expiresAt
+                ? (url.expiresAt | date: 'MMM d, y')
+                : 'Never'
+            }}
+          </dd>
+        </div>
+      </dl>
+
+      <footer class="url-card__actions">
+        <a
+          class="mobile-action"
+          [routerLink]="['/urls', url.id]"
+        >
+          <i
+            class="bi bi-eye"
+            aria-hidden="true"
+          ></i>
+
+          Details
+        </a>
+
+        <a
+          class="mobile-action"
+          [routerLink]="[
+            '/urls',
+            url.id,
+            'analytics'
+          ]"
+        >
+          <i
+            class="bi bi-bar-chart"
+            aria-hidden="true"
+          ></i>
+
+          Analytics
+        </a>
+
+        <button
+          class="mobile-action"
+          type="button"
+          [disabled]="busyId() !== null"
+          (click)="requestAction('copy', url)"
+        >
+          <i
+            class="bi bi-copy"
+            aria-hidden="true"
+          ></i>
+
+          Copy
+        </button>
+
+        @if (canEnable(url)) {
+          <button
+            class="mobile-action"
+            type="button"
+            [disabled]="busyId() !== null"
+            (click)="requestAction('enable', url)"
+          >
+            <i
+              class="bi bi-play"
+              aria-hidden="true"
+            ></i>
+
+            Enable
+          </button>
+        }
+
+        @if (canDisable(url)) {
+          <button
+            class="mobile-action"
+            type="button"
+            [disabled]="busyId() !== null"
+            (click)="requestAction('disable', url)"
+          >
+            <i
+              class="bi bi-pause"
+              aria-hidden="true"
+            ></i>
+
+            Disable
+          </button>
+        }
+
+        @if (canDelete(url)) {
+          <button
+            class="mobile-action mobile-action--danger"
+            type="button"
+            [disabled]="busyId() !== null"
+            (click)="requestAction('delete', url)"
+          >
+            <i
+              class="bi bi-trash"
+              aria-hidden="true"
+            ></i>
+
+            Delete
+          </button>
+        }
+      </footer>
+    </article>
+  }
+</div>

@@ -1,0 +1,1611 @@
+﻿{
+    "generatedAt":  "2026-08-07T13:47:54.0417982+00:00",
+    "scope":  "Fixed repository roots; relative names only; generated at build/review time.",
+    "exclusions":  [
+                       "Git metadata",
+                       "dependencies",
+                       "build/test output",
+                       "environment files",
+                       "credential and key-like names"
+                   ],
+    "nodes":  [
+                  {
+                      "name":  "api",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  "openapi.yaml",
+                                           "type":  "file"
+                                       }
+                                   ]
+                  },
+                  {
+                      "name":  "backend",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  "src",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "main",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "java",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "com",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "example",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "urlshortener",
+                                                                                                                                                    "type":  "directory"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "resources",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "db",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "migration",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "V1__create_shortened_url_table.sql",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "V2__create_click_event_table.sql",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "V3__create_idempotency_record_table.sql",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "V4__create_audit_event_table.sql",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "application.yml",
+                                                                                                          "type":  "file"
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "application-local.yml",
+                                                                                                          "type":  "file"
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "application-test.yml",
+                                                                                                          "type":  "file"
+                                                                                                      }
+                                                                                                  ]
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "test",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "java",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "com",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "example",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "urlshortener",
+                                                                                                                                                    "type":  "directory"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 }
+                                                                             ]
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "Dockerfile",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "pom.xml",
+                                           "type":  "file"
+                                       }
+                                   ]
+                  },
+                  {
+                      "name":  "docs",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  "adr",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "ADR-001-SHORT-CODE-STRATEGY.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "ADR-002-DATABASE.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "ADR-003-ANALYTICS.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "ADR-004-CACHING.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "ADR-005-PRIVACY.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "ADR-006-FILESYSTEM-DISPLAY.md",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "ai-traceability",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "ACCEPTED-OUTPUTS.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "AI-TASK-REGISTER.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "EDITED-OUTPUTS.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "HUMAN-APPROVALS.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-STRATEGY.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "REJECTED-OUTPUTS.md",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "quality",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "backend-quality-gates.json",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "frontend-quality-gates.json",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "overall-quality-gates.json",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "scenarios",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "AMBIGUOUS-SCENARIO.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "BROWNFIELD-SCENARIO.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "GREENFIELD-SCENARIO.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "SCENARIO-COMPARISON.md",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "validation",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "BACKEND-FAILURE-SCENARIOS.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "BACKEND-REGRESSION-MATRIX.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "BACKEND-SECURITY-REVIEW.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "DEFECTS-FOUND-DURING-PROMPT-5.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "DEFECTS-FOUND-DURING-PROMPT-7.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "E2E-SCENARIO-MATRIX.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "FRONTEND-ACCESSIBILITY-REVIEW.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "FRONTEND-REGRESSION-MATRIX.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "FRONTEND-RESPONSIVE-REVIEW.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "FRONTEND-SECURITY-REVIEW.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-10-FINAL-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-3-BACKEND-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-4-BACKEND-ADVANCED-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-5-BACKEND-QUALITY-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-6-FRONTEND-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-7-FRONTEND-QUALITY-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-8-TRACEABILITY-VALIDATION.md",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "PROMPT-9-PRODUCTION-READINESS-VALIDATION.md",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "AI-SECURE-USAGE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "API-CONTRACT.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "ARCHITECTURE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "ASSUMPTIONS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "DATABASE-DESIGN.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "DATA-FLOWS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "DEFECT-SUMMARY.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "DEMO-GUIDE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "DOCUMENTATION-CONSISTENCY-REVIEW.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "ENGINEER-OWNERSHIP.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-CODE-REVIEW.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-ENGINEERING-SUMMARY.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-INTERVIEW-TALKING-POINTS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-SECURITY-REVIEW.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-SIMPLIFICATION-REVIEW.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FINAL-STATUS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "FRONTEND-ARCHITECTURE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "HUMAN-APPROVAL-GATES.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "HUMAN-REVIEW-CHECKLIST.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "IMPLEMENTATION-SEQUENCE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "INTERVIEW-REVIEW-INDEX.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "LIMITATIONS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "PRODUCTION-EVOLUTION.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "PRODUCTION-READINESS-ASSESSMENT.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "REQUIREMENT-ANALYSIS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "REQUIREMENT-COVERAGE.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "REVIEWER-QUESTIONS.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "RISK-REGISTER.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "SCOPE-AND-PRIORITIES.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "TASK-DECOMPOSITION.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "TRACEABILITY-MATRIX.md",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "TRADE-OFFS.md",
+                                           "type":  "file"
+                                       }
+                                   ]
+                  },
+                  {
+                      "name":  "frontend",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  ".angular",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "cache",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "19.2.25",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "angular-webpack",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "15b3035d47b4c8908213cdad4a1fedb4d044c47f",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "43d18bd7510e6895c64c5bbdc0c9ccf1a630681f",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "496bb6ea0e5e84e95adf9eb12fe2fe3d46d16f31",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "3.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "4.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "5.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "4c857787af8d0ebe5d4282b06e35dcadf49a8a5c",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "66c1a18f48cf18e41c4f6eba13073c913cc8dd2f",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "3.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "4.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "90a1a36b0e16790646f20731650b372734aa4894",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "3.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "4.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "e92c40f465ca758c1cb8344813baa568039e7871",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "0.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "1.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "2.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "index.pack.old",
+                                                                                                                                                    "type":  "file"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "babel-webpack",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "00ced8e0dd96df7ecf8757e400fdd98024117022ceb4df77ac91a900060d97c3.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "011d29b6f25ec5f9f726bbe8e5b7b8f547ccb14f0f7d8da84ad015d7097d4a0f.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "016a6ea5e740cb937bf39f2c13b5407f9dd713461b210043bf5dc3db60597544.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "01b314ca486cd869e8ab8845a9c67a0286b85d201b7e3de0f25a74c375c0c6e6.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "026e1921dc3ec6499cc96637a5f799559a8cc83d1121e72fc78308ced557b4d0.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "02c0633037cf85899ae56ea5f4a16657a75f9eca612a59c8ce10ade9ffb311d9.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "031fffb3a727818dd475179953d78c8d8ed46256b65b9aed82513775fbcdfee4.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0321810d14b4e7907b10bf644185a76e225feb287d71c5f6935c3acfab1d86bd.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0397a5a9b36e1b0e19c4f97b04af4ffd4f3c4121855ed2f879f2f33545c5ed1b.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0427f5535ead387146a727094519ca587369cce3c91c3f628bcbbbc8ad0cc6a0.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "04c43e01b469af15dc779636b24e521feede61fb2a9f3db508fadfd706d89271.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "04d81c891bf420e2561ab64c5f540ce66633c2a7f8688cd4e27d3dd4edb2ee2e.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "05a6f47d9c00324b016a1b324b3c0254aa6fb8e4f2e7cb4a861d30555e619a69.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "05ab0842480ae1cfc95748da0f30a10e95219b661bedece6c293d106f815b3af.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "06bb969f7938afb9a266339d132fad80d61fc650061737baa7b20efc47ab4564.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "077687b7e57c45ea95af21b6ccf4cab68a3c956418cb3335cf66081e3068291a.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "077c9a72807f90b2e70cbe6a1b6e21ee1599f3f772f493f24f22bd52958b7250.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "078fa042bff972e2e7d56b0e0654e1e0745df2dfbadbf7fc61e956cf4918267f.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0845a71e40e75b4754ea637ccc31614bbed0f2bfbd28edf50ae596b2498465d2.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "09b49ccb50641bfe25ae29414fdc171dae0348346967e4d4a75e1f36104aa3d7.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0a636326240d28ebee79f593ffd5d5c395522b254512803ff1468224f7f42def.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0b1f2bcd0b62dcfa8498efafbf3bfa4619e4ff265a54d8e920a2994ce2621b36.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0c63d2cf29e9ef06469716657881bf94df373bfdfebda9b29bf17a1edb430b73.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0c997eeb1977c624abe04d32ec676660649d5b31ef1f0c64eb88543d69fd0006.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0c9d29e324b7d3a7851ff7bffd98df894737fb3c2dc3623a667068d6756f9de9.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0e11833eb6b50aa0b0ede62e40cd1b91f552b3841dcd9f8e99befa7cfefe96b0.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0ee4aec87aef53b02d126c73b26c88df8b9864706712eafad736fe39d5e39001.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0f5419db323c2ae9061ebb4c90e1c9a6b1c7bb95380cb37037a05aef346bd307.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0fbaf6960997822ef717a90675a6d429fc34eddc38a219906794c462d0a23c71.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "0fc930c135cc9f0dfef2aea8308eb5e29407724519be4f1ab5c9fddec618ec8d.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "10c0c0786ee5455d846316dfbcf4d51393ef141f3c947135059e7b4c62fcb2f9.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "10ca060755b7eda274987f1ec820027a5a3b9b3dcf4b402f08776a66a1c0c2b5.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "115899eff19762890532ec092e305733164dd9636a712e46c7f93392e9c9095e.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "11ca4a71586b870e78d0db0f43cc83cc3b200276c470fa00b1826333e7af31ff.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "12085df246d0ac2306d11a1193bea1b9521ef25f5285f3d2f569de8ca47aab39.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1240907029c43f243ee08fe67d7ea3a522a063382f7465c97f5b397d8ac40739.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "12b647958a0c627afcba5c60acc21821909ba6364b069a580187b3c5f816c5a9.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "12ee94f3838ed6a88ea75f81fe206bb9da802f29a84ad7103b2de99589b7debc.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1401d72e997db14a0da65bafd1afbbc08c9918b5f1d8daa9deb88cd5f495ba3e.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "144c4ed20e9de0dee29fd7ea24cc4cf9fa290127914fc35a48acc794de968380.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "144e2ab673a4a811219a1ad8fd222c9727b9c7e123b1fb968a1b06b785b87149.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "15d4e43d1ea43e2da7315188a7630437940ef21d663b62b983d1795738d6080f.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "15eab207841649f7adc63305b6263b74aa08a6f0de27a0d646c355530ee27602.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1601e9479e132c8a46ed5a7e2ed2e0fd104a33b6db6cd82944baaf152aa8cefc.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "16d2a88f89f4821cfc2663df26406e79e58114445ec912647786c70e14126f05.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "19dce4b4be53b0a1cda02945e27432f01ef10151ff42a9cb81427cd770b8d777.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1a8999a764e5f7ec047c04ed90f02c14fd8b9e95311544a3e1ab1258e7cbb908.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1aa42fc93b91070fcc83f898e2f4ac6864c0b453db160cb498b0baf660976591.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1afb5615aba539e5aa68114fa32ee43bba8aed56566eb766b4b3eeac83a61402.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1cbdb6e554eec7f43e208e8471b254e578eae9b470a907c96c4e6e229ded7605.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1d02b9b99e172e78e55b7c6c3ccc14f8781cefce250e64767e8c6ca41a2b92a5.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1e0ae519580aa92c71df27fc2e8c243442227f680d7c9822ea7452e2ffd1fbaa.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1e92ef386e4d4c6b6c81fbb90e9a0bc957abd991051c8d99611337edf17e7127.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1f251eb0978629c4daeb713e25e7ca0d4558f4b59dfbd05d83e98546ee1e758d.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "1f42444c1d6f0cadacfa0f53eb8953048c6d94ce8126da6c7371c7c0941efb60.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "201d1c278a101f4baba81fad582abd4b62057486305814e812e1dba4fdbc9844.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2259bb9e240501620fdbc615883a874479f0e469adc7f5c5ed91c7f1e023d8b5.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "22b9f6c0183c7dd2d458b89608d9277546862f1c4ed9f6232f88a3909c180d60.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2379eaaa5e92eee33b31ff04710aeca5ebaf0b3f2d1b7a5fff1aac63ddf27733.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "240583dc430931e94b688b1b0a5afc78c662c37e1d59e6662348d348e712d79c.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "256817163d5302d74ae1a51ad195c9fec7b3b171160952b2d91634c0d81e70fe.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "25d979435ca90e119ae1f9c2db252e94e4166fda9aa3720df447075f84b5d078.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "262ba6a89d321c4832d90bf7e951b9ecfdce0c6bc7a6f8784618400da6cbbf0d.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "26dfc5e40ce8e4d3c4238b998fb43286a1b56e47572f21c22a5c6ad21845a067.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "270057f1acd7688a3cbe13a56bc4829c33ada00e011c30e187e506285efc6742.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "29db2671d8c55811586d8408648b01f939a70b00a6b2e3eb02cce92883403f96.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2a0b9eccaab9d405c1223174abafe251dea7886583dbe61c452206ac22379bbd.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2a8ada80914579617be66639919e54562eb7204f7ae48a5b3793eb4d6300f3fb.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2b77eb26aed35ff5d4b162c2c9694eb42d3116b6ac40be796a4322dbc2238d3e.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2ba7bf12ad3d9ff6d25ba3e67f1f585b766b98969d6ff1fd8f612b687e162c4d.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2c15ffdcd4cf764ba90ea58dacae8ceb46893c0beaffa8c93930c7dfdc69bfe4.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2cc2cf0676d159822429ae70d238715346afc5dc9d98ae01bf67ac2d319aa8fc.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "2db64a94db8a636c037e175b4b421c34c8a15f000b6d29ffeec367ddc283f5e7.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "3004d1f9b3283fc258aca59a975a40c1841936b4f5dd2dd79c7f7f8e3d6fd892.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "30292c72d1b9ab39a9a8c77012b15546e894a23423996456d331b065b5233d37.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "30681af6949d629e6825fd11d7f93f3170c3f25b16c27ef9b426a56ac66e8b9b.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "3172287f8910340fa784a6d0aa75212e7beab0c07b422a3a52cee4179670d3f9.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "317e883a9afb17bae9dc810d67bf6529002c71f80269aa709d1a3691c3033314.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "322ed1baa34233fc3aa9271564ed3bbfb633a2d9d81120d76a6158600f5b4bb8.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "325193334d195f60546efa7bc78bf33ce3df3df6b1733ac952bae811b6ae6eab.json",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "url-shortener-frontend",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "vite",
+                                                                                                                               "type":  "directory",
+                                                                                                                               "children":  [
+                                                                                                                                                {
+                                                                                                                                                    "name":  "deps",
+                                                                                                                                                    "type":  "directory"
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    "name":  "deps_ssr",
+                                                                                                                                                    "type":  "directory"
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  ".tsbuildinfo",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "angular-compiler.db",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "angular-compiler.db-lock",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 }
+                                                                             ]
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "e2e",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "browser",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "core-workflows.spec.ts",
+                                                                                     "type":  "file"
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "reliability-responsive.spec.ts",
+                                                                                     "type":  "file"
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "reviewer-surfaces.spec.ts",
+                                                                                     "type":  "file"
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "full-stack",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "full-stack.spec.ts",
+                                                                                     "type":  "file"
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "support",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "api-mock.ts",
+                                                                                     "type":  "file"
+                                                                                 }
+                                                                             ]
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "public",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "assets",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "engineering",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "project-structure.json",
+                                                                                                          "type":  "file"
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "reviewer-metadata.json",
+                                                                                                          "type":  "file"
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "portfolio",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "production-applications.json",
+                                                                                                          "type":  "file"
+                                                                                                      }
+                                                                                                  ]
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "favicon.svg",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  "src",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "app",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "core",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "api",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "analytics-api.service.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "analytics-api.service.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "api.models.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "url-api.service.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "url-api.service.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "errors",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "frontend-api-error.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "interceptors",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "api-error.interceptor.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "api-error.interceptor.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "review",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "review.models.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "reviewer-metadata.service.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "reviewer-metadata.service.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "services",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "clipboard.service.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "notification.service.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "features",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "analytics",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "analytics-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "analytics-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "create-url",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "create-url-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "create-url-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "dashboard",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "dashboard-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "dashboard-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "engineering-review",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "engineering-review-page.component.css",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "engineering-review-page.component.html",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "engineering-review-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "engineering-review-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "production-applications",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "production-applications-page.component.css",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-applications-page.component.html",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-applications-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-applications-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "production-readiness",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "production-readiness-page.component.css",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-readiness-page.component.html",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-readiness-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "production-readiness-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "url-details",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "url-details-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "url-details-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "url-management",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "url-management-page.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "url-management-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "layout",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "notification-center",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "notification-center.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "shell",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "shell.component.css",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "shell.component.html",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "shell.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "shared",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "components",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "confirmation-dialog.component.spec.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "confirmation-dialog.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "count-table.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "empty-state.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "error-state.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "loading-indicator.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "not-found-page.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "name":  "status-badge.component.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "pipes",
+                                                                                                          "type":  "directory",
+                                                                                                          "children":  [
+                                                                                                                           {
+                                                                                                                               "name":  "destination-summary.pipe.ts",
+                                                                                                                               "type":  "file"
+                                                                                                                           }
+                                                                                                                       ]
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "testing",
+                                                                                     "type":  "directory",
+                                                                                     "children":  [
+                                                                                                      {
+                                                                                                          "name":  "api-fixtures.ts",
+                                                                                                          "type":  "file"
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "name":  "review-fixtures.ts",
+                                                                                                          "type":  "file"
+                                                                                                      }
+                                                                                                  ]
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "app.component.ts",
+                                                                                     "type":  "file"
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "app.config.ts",
+                                                                                     "type":  "file"
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "app.routes.spec.ts",
+                                                                                     "type":  "file"
+                                                                                 },
+                                                                                 {
+                                                                                     "name":  "app.routes.ts",
+                                                                                     "type":  "file"
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "environments",
+                                                                "type":  "directory",
+                                                                "children":  [
+                                                                                 {
+                                                                                     "name":  "environment.ts",
+                                                                                     "type":  "file"
+                                                                                 }
+                                                                             ]
+                                                            },
+                                                            {
+                                                                "name":  "index.html",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "main.ts",
+                                                                "type":  "file"
+                                                            },
+                                                            {
+                                                                "name":  "styles.css",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       },
+                                       {
+                                           "name":  ".gitignore",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "angular.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "Dockerfile",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "eslint.config.js",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "nginx.conf",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "package.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "package-lock.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "playwright.config.ts",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "proxy.conf.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "tsconfig.app.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "tsconfig.e2e.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "tsconfig.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "tsconfig.spec.json",
+                                           "type":  "file"
+                                       }
+                                   ]
+                  },
+                  {
+                      "name":  "scripts",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  "generate-project-metadata.ps1",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "reviewer-metadata.source.json",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "run-backend-quality-gates.sh",
+                                           "type":  "file"
+                                       },
+                                       {
+                                           "name":  "run-frontend-quality-gates.ps1",
+                                           "type":  "file"
+                                       }
+                                   ]
+                  },
+                  {
+                      "name":  ".github",
+                      "type":  "directory",
+                      "children":  [
+                                       {
+                                           "name":  "workflows",
+                                           "type":  "directory",
+                                           "children":  [
+                                                            {
+                                                                "name":  "ci.yml",
+                                                                "type":  "file"
+                                                            }
+                                                        ]
+                                       }
+                                   ]
+                  }
+              ]
+}

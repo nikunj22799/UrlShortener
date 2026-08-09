@@ -1,0 +1,56 @@
+:host {
+  display: block;
+}
+
+.results-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.result-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.84rem;
+}
+
+.result-heading > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.result-heading strong {
+  color: var(--color-ink);
+  font-size: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.82rem;
+}
+
+.mutation-error {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 48rem) {
+  .page-header .button {
+    width: 100%;
+  }
+
+  .result-heading {
+    align-items: flex-start;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,103 @@
+spring:
+  application:
+    name: url-shortener-backend
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:url_shortener}?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=${DB_CONNECT_TIMEOUT_MS:3000}&socketTimeout=${DB_SOCKET_TIMEOUT_MS:5000}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    hikari:
+      connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT_MS:3000}
+      validation-timeout: ${DB_POOL_VALIDATION_TIMEOUT_MS:1000}
+      maximum-pool-size: ${DB_POOL_MAXIMUM_SIZE:10}
+      minimum-idle: ${DB_POOL_MINIMUM_IDLE:2}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+    time-zone: UTC
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  short-code:
+    length: ${SHORT_CODE_LENGTH:10}
+    maximum-attempts: ${SHORT_CODE_MAX_ATTEMPTS:5}
+  pagination:
+    default-size: ${PAGINATION_DEFAULT_SIZE:20}
+    maximum-size: ${PAGINATION_MAX_SIZE:100}
+  cache:
+    enabled: ${CACHE_ENABLED:false}
+    maximum-entries: ${CACHE_MAXIMUM_ENTRIES:10000}
+    ttl-seconds: ${CACHE_TTL_SECONDS:30}
+  analytics:
+    default-range-days: ${ANALYTICS_DEFAULT_RANGE_DAYS:7}
+    maximum-range-days: ${ANALYTICS_MAXIMUM_RANGE_DAYS:90}
+    maximum-hourly-range-days: ${ANALYTICS_MAXIMUM_HOURLY_RANGE_DAYS:7}
+    default-referrer-limit: ${ANALYTICS_DEFAULT_REFERRER_LIMIT:10}
+    maximum-referrer-limit: ${ANALYTICS_MAXIMUM_REFERRER_LIMIT:100}
+    retention-days: ${ANALYTICS_RETENTION_DAYS:90}
+    cleanup-batch-size: ${ANALYTICS_CLEANUP_BATCH_SIZE:5000}
+  idempotency:
+    retention-hours: ${IDEMPOTENCY_RETENTION_HOURS:24}
+    cleanup-batch-size: ${IDEMPOTENCY_CLEANUP_BATCH_SIZE:500}
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    maximum-identities: ${RATE_LIMIT_MAXIMUM_IDENTITIES:10000}
+    create:
+      requests: ${RATE_LIMIT_CREATE_REQUESTS:30}
+      window-seconds: ${RATE_LIMIT_CREATE_WINDOW_SECONDS:60}
+    redirect:
+      requests: ${RATE_LIMIT_REDIRECT_REQUESTS:300}
+      window-seconds: ${RATE_LIMIT_REDIRECT_WINDOW_SECONDS:60}
+    management:
+      requests: ${RATE_LIMIT_MANAGEMENT_REQUESTS:120}
+      window-seconds: ${RATE_LIMIT_MANAGEMENT_WINDOW_SECONDS:60}
+    analytics:
+      requests: ${RATE_LIMIT_ANALYTICS_REQUESTS:60}
+      window-seconds: ${RATE_LIMIT_ANALYTICS_WINDOW_SECONDS:60}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: never
+
+server:
+  shutdown: graceful
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    url: /openapi.yaml
+    disable-swagger-default-url: true
+
+logging:
+  pattern:
+    level: "%5p [correlationId:%X{correlationId:-}]"
+  level:
+    org.springframework.boot: INFO
+    org.springframework.boot.autoconfigure: INFO
+    org.springframework.boot.web.servlet.ServletContextInitializerBeans: INFO
+    org.springframework.jdbc.core: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.orm.jdbc.bind: OFF

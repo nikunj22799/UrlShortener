@@ -1,0 +1,472 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">URL Management</p>
+
+    <h1>URL Details</h1>
+
+    <p>
+      Review the URL configuration and manage its lifecycle.
+    </p>
+  </div>
+
+  <a
+    class="button button--secondary"
+    routerLink="/urls"
+  >
+    <i
+      class="bi bi-arrow-left"
+      aria-hidden="true"
+    ></i>
+
+    Back to URLs
+  </a>
+</header>
+
+@if (loadError(); as currentError) {
+  <app-error-state
+    [error]="currentError"
+    title="URL unavailable"
+    (retry)="reload()"
+  />
+} @else if (loading()) {
+  <app-loading-indicator
+    label="Loading URL details..."
+  />
+} @else {
+  @if (url(); as currentUrl) {
+    <div class="details-layout">
+      <div class="details-main">
+
+        <!-- Main URL information -->
+        <section class="details-card">
+          <header class="details-card__header">
+            <div class="identity">
+              <div>
+                <p class="eyebrow">
+                  {{
+                    currentUrl.codeType === 'CUSTOM_ALIAS'
+                      ? 'Custom alias'
+                      : 'Generated code'
+                  }}
+                </p>
+
+                <h2>
+                  {{ currentUrl.shortCode }}
+                </h2>
+              </div>
+
+              <app-status-badge
+                [status]="currentUrl.status"
+                [expired]="currentUrl.expired"
+              />
+            </div>
+
+            <div class="primary-actions">
+              <button
+                class="button"
+                type="button"
+                (click)="copyShortUrl(currentUrl)"
+              >
+                <i
+                  class="bi bi-copy"
+                  aria-hidden="true"
+                ></i>
+
+                Copy URL
+              </button>
+
+              <a
+                class="button button--secondary"
+                [href]="currentUrl.shortUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i
+                  class="bi bi-box-arrow-up-right"
+                  aria-hidden="true"
+                ></i>
+
+                Open
+              </a>
+
+              <a
+                class="button button--secondary"
+                [routerLink]="[
+                  '/urls',
+                  currentUrl.id,
+                  'analytics'
+                ]"
+              >
+                <i
+                  class="bi bi-bar-chart"
+                  aria-hidden="true"
+                ></i>
+
+                Analytics
+              </a>
+            </div>
+          </header>
+
+          <dl class="details-grid">
+            <div class="details-grid__wide">
+              <dt>Short URL</dt>
+
+              <dd class="url-value">
+                {{ currentUrl.shortUrl }}
+              </dd>
+            </div>
+
+            <div class="details-grid__wide">
+              <dt>Destination</dt>
+
+              <dd class="destination-value">
+                {{ currentUrl.originalUrl }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Status</dt>
+              <dd>{{ currentUrl.status }}</dd>
+            </div>
+
+            <div>
+              <dt>Code type</dt>
+
+              <dd>
+                {{
+                  currentUrl.codeType === 'CUSTOM_ALIAS'
+                    ? 'Custom alias'
+                    : 'Generated'
+                }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Created</dt>
+
+              <dd>
+                {{
+                  currentUrl.createdAt
+                    | date: 'MMM d, y, h:mm a'
+                }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Updated</dt>
+
+              <dd>
+                {{
+                  currentUrl.updatedAt
+                    | date: 'MMM d, y, h:mm a'
+                }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Expiration</dt>
+
+              <dd>
+                {{
+                  currentUrl.expiresAt
+                    ? (
+                        currentUrl.expiresAt
+                          | date: 'MMM d, y, h:mm a'
+                      )
+                    : 'No expiration'
+                }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Expired</dt>
+
+              <dd>
+                {{ currentUrl.expired ? 'Yes' : 'No' }}
+              </dd>
+            </div>
+
+            @if (currentUrl.deletedAt) {
+              <div>
+                <dt>Deleted</dt>
+
+                <dd>
+                  {{
+                    currentUrl.deletedAt
+                      | date: 'MMM d, y, h:mm a'
+                  }}
+                </dd>
+              </div>
+            }
+          </dl>
+        </section>
+
+        <!-- Expiration -->
+        @if (currentUrl.status !== 'DELETED') {
+          <section
+            id="expiration"
+            class="details-card expiration-card"
+          >
+            <header class="section-heading">
+              <div>
+                <h2>Expiration</h2>
+
+                <p>
+                  Update the expiration time or clear it to
+                  keep this URL active indefinitely.
+                </p>
+              </div>
+            </header>
+
+            <form
+              class="expiration-form"
+              [formGroup]="expirationForm"
+              (ngSubmit)="saveExpiration()"
+              novalidate
+            >
+              <div class="field">
+                <label for="detail-expiration">
+                  Expiration
+                </label>
+
+                <input
+                  id="detail-expiration"
+                  type="datetime-local"
+                  formControlName="expiresAt"
+                  [attr.aria-invalid]="
+                    expirationForm.controls.expiresAt.touched &&
+                    expirationForm.controls.expiresAt.invalid
+                  "
+                  aria-describedby="detail-expiration-hint detail-expiration-error"
+                >
+
+                <p
+                  id="detail-expiration-hint"
+                  class="field-hint"
+                >
+                  Leave empty for no expiration. Times are
+                  converted to UTC before being sent to the backend.
+                </p>
+
+                @if (
+                  expirationForm.controls.expiresAt.touched &&
+                  expirationForm.controls.expiresAt.invalid
+                ) {
+                  <p
+                    id="detail-expiration-error"
+                    class="field-error"
+                  >
+                    Expiration must be a valid future date and time.
+                  </p>
+                }
+              </div>
+
+              <div class="expiration-actions">
+                <button
+                  class="button"
+                  type="submit"
+                  [disabled]="
+                    mutationBusy() ||
+                    expirationForm.invalid ||
+                    !expirationChanged(currentUrl)
+                  "
+                >
+                  <i
+                    class="bi bi-floppy"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+                    mutationBusy()
+                      ? 'Saving...'
+                      : 'Save expiration'
+                  }}
+                </button>
+
+                <button
+                  class="button button--secondary"
+                  type="button"
+                  [disabled]="
+                    mutationBusy() ||
+                    !expirationChanged(currentUrl)
+                  "
+                  (click)="
+                    resetExpirationForm(currentUrl)
+                  "
+                >
+                  <i
+                    class="bi bi-arrow-counterclockwise"
+                    aria-hidden="true"
+                  ></i>
+
+                  Reset
+                </button>
+              </div>
+            </form>
+          </section>
+        }
+
+        @if (mutationError(); as currentError) {
+          <section class="mutation-error">
+            <app-error-state
+              [error]="currentError"
+              title="Change was not applied"
+              (retry)="reload()"
+            />
+
+            @if (
+              currentError.code ===
+              'OPTIMISTIC_LOCK_CONFLICT'
+            ) {
+              <button
+                class="button button--secondary"
+                type="button"
+                (click)="reload()"
+              >
+                <i
+                  class="bi bi-arrow-counterclockwise"
+                  aria-hidden="true"
+                ></i>
+
+                Reload latest record
+              </button>
+            }
+          </section>
+        }
+      </div>
+
+      <!-- Lifecycle sidebar -->
+      <aside class="lifecycle-card">
+        <div>
+          <p class="eyebrow">Lifecycle</p>
+          <h2>URL Actions</h2>
+
+          <p>
+            Lifecycle changes use the current record version
+            to protect against stale updates.
+          </p>
+        </div>
+
+        <div class="lifecycle-summary">
+          <div>
+            <span>Current status</span>
+
+            <strong>
+              {{ currentUrl.status }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Record version</span>
+
+            <strong>
+              {{ currentUrl.version }}
+            </strong>
+          </div>
+        </div>
+
+        @if (currentUrl.status !== 'DELETED') {
+          <div class="lifecycle-actions">
+            @if (currentUrl.status === 'ACTIVE') {
+              <button
+                class="lifecycle-action"
+                type="button"
+                [disabled]="mutationBusy()"
+                (click)="requestConfirmation('disable')"
+              >
+                <span class="lifecycle-action__icon">
+                  <i
+                    class="bi bi-pause"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+
+                <span>
+                  <strong>Disable URL</strong>
+                  <small>
+                    Temporarily stop redirects
+                  </small>
+                </span>
+              </button>
+            } @else if (
+              currentUrl.status === 'DISABLED'
+            ) {
+              <button
+                class="lifecycle-action"
+                type="button"
+                [disabled]="mutationBusy()"
+                (click)="enable()"
+              >
+                <span class="lifecycle-action__icon">
+                  <i
+                    class="bi bi-play"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+
+                <span>
+                  <strong>Enable URL</strong>
+                  <small>
+                    Allow redirects again
+                  </small>
+                </span>
+              </button>
+            }
+
+            <button
+              class="lifecycle-action lifecycle-action--danger"
+              type="button"
+              [disabled]="mutationBusy()"
+              (click)="requestConfirmation('delete')"
+            >
+              <span class="lifecycle-action__icon">
+                <i
+                  class="bi bi-trash"
+                  aria-hidden="true"
+                ></i>
+              </span>
+
+              <span>
+                <strong>Delete URL</strong>
+                <small>
+                  Soft-delete this URL
+                </small>
+              </span>
+            </button>
+          </div>
+        } @else {
+          <div class="deleted-notice">
+            This URL has been deleted and can no longer
+            be modified.
+          </div>
+        }
+      </aside>
+    </div>
+
+    @if (confirmation(); as action) {
+      <app-confirmation-dialog
+        dialogId="details-confirmation"
+        [title]="
+          action === 'delete'
+            ? 'Delete short URL?'
+            : 'Disable short URL?'
+        "
+        [message]="
+          confirmationMessage(
+            action,
+            currentUrl
+          )
+        "
+        [confirmLabel]="
+          action === 'delete'
+            ? 'Delete URL'
+            : 'Disable URL'
+        "
+        [destructive]="action === 'delete'"
+        [busy]="mutationBusy()"
+        (dismissed)="cancelConfirmation()"
+        (accepted)="confirmMutation(action)"
+      />
+    }
+  }
+}

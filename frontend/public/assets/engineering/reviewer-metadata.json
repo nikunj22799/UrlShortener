@@ -1,0 +1,443 @@
+﻿{
+    "overview":  {
+                     "name":  "Link Operations",
+                     "summary":  "A controlled URL-shortener prototype with URL lifecycle management, redirects, bounded analytics, idempotent creation, audit events, and reviewer evidence.",
+                     "architecture":  "Angular standalone SPA and Spring Boot modular monolith backed by MySQL and Flyway.",
+                     "runtime":  "Java 21, Spring Boot 3.5.16, Angular 19.2.25, Node 20, MySQL 8.4.",
+                     "evidenceBoundary":  "Repository evidence and observed local validation only; no production use, approval, scale, or performance is claimed."
+                 },
+    "architecture":  [
+                         {
+                             "name":  "Angular SPA",
+                             "responsibility":  "Typed management, analytics, review, readiness, and optional portfolio experiences.",
+                             "flow":  "Browser -\u003e same-origin /api and /r paths; reviewer content -\u003e packaged allowlisted JSON."
+                         },
+                         {
+                             "name":  "Spring Boot modular monolith",
+                             "responsibility":  "URL, redirect, analytics, audit, idempotency, rate-limit, and shared operational modules.",
+                             "flow":  "Controllers -\u003e application services -\u003e Spring Data repositories -\u003e MySQL."
+                         },
+                         {
+                             "name":  "MySQL + Flyway",
+                             "responsibility":  "Authoritative URL, click-event, idempotency, and audit persistence with forward-only V1-V4 migrations.",
+                             "flow":  "Flyway migrates before JPA validates; application uses a bounded Hikari connection pool."
+                         },
+                         {
+                             "name":  "Optional local cache",
+                             "responsibility":  "Short-lived in-process redirect lookup acceleration; disabled by default.",
+                             "flow":  "Cache-aside lookup with database fallback; no Redis or distributed invalidation is claimed."
+                         }
+                     ],
+    "apiGroups":  [
+                      {
+                          "name":  "URL Management",
+                          "endpoints":  [
+                                            {
+                                                "method":  "POST",
+                                                "path":  "/api/v1/urls",
+                                                "purpose":  "Create a short URL with optional alias, expiry, and idempotency key."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls",
+                                                "purpose":  "Search, filter, sort, and page non-deleted URLs."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls/{id}",
+                                                "purpose":  "Read URL details and a strong ETag."
+                                            },
+                                            {
+                                                "method":  "PATCH",
+                                                "path":  "/api/v1/urls/{id}",
+                                                "purpose":  "Update expiration with optimistic concurrency."
+                                            },
+                                            {
+                                                "method":  "POST",
+                                                "path":  "/api/v1/urls/{id}/enable",
+                                                "purpose":  "Enable a URL with optimistic concurrency."
+                                            },
+                                            {
+                                                "method":  "POST",
+                                                "path":  "/api/v1/urls/{id}/disable",
+                                                "purpose":  "Disable a URL with optimistic concurrency."
+                                            },
+                                            {
+                                                "method":  "DELETE",
+                                                "path":  "/api/v1/urls/{id}",
+                                                "purpose":  "Soft-delete a URL with optimistic concurrency."
+                                            }
+                                        ]
+                      },
+                      {
+                          "name":  "Redirect",
+                          "endpoints":  [
+                                            {
+                                                "method":  "GET/HEAD",
+                                                "path":  "/r/{shortCode}",
+                                                "purpose":  "Resolve an active, unexpired code without exposing management data."
+                                            }
+                                        ]
+                      },
+                      {
+                          "name":  "Analytics",
+                          "endpoints":  [
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls/{id}/analytics/summary",
+                                                "purpose":  "Return bounded aggregate click counts."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls/{id}/analytics/timeseries",
+                                                "purpose":  "Return hourly or daily UTC buckets."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls/{id}/analytics/referrers",
+                                                "purpose":  "Return sanitized referrer-host counts."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/api/v1/urls/{id}/analytics/devices",
+                                                "purpose":  "Return coarse device-category counts."
+                                            }
+                                        ]
+                      },
+                      {
+                          "name":  "Engineering",
+                          "endpoints":  [
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/assets/engineering/reviewer-metadata.json",
+                                                "purpose":  "Serve a packaged, allowlisted review snapshot; not a filesystem API."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/assets/engineering/project-structure.json",
+                                                "purpose":  "Serve generated relative names from bounded repository roots."
+                                            }
+                                        ]
+                      },
+                      {
+                          "name":  "System",
+                          "endpoints":  [
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/actuator/health",
+                                                "purpose":  "Return sanitized aggregate application health without component details."
+                                            },
+                                            {
+                                                "method":  "GET",
+                                                "path":  "/actuator/metrics",
+                                                "purpose":  "Expose controlled prototype metrics; protect or disable before public deployment."
+                                            }
+                                        ]
+                      }
+                  ],
+    "database":  [
+                     {
+                         "table":  "shortened_url",
+                         "purpose":  "URL identity, destination, code, lifecycle, expiration, and optimistic version.",
+                         "migration":  "V1"
+                     },
+                     {
+                         "table":  "click_event",
+                         "purpose":  "Minimal best-effort analytics events without raw IP storage.",
+                         "migration":  "V2"
+                     },
+                     {
+                         "table":  "idempotency_record",
+                         "purpose":  "Request fingerprint and replay outcome for bounded create retries.",
+                         "migration":  "V3"
+                     },
+                     {
+                         "table":  "audit_event",
+                         "purpose":  "Sanitized lifecycle event metadata without destination URLs.",
+                         "migration":  "V4"
+                     }
+                 ],
+    "scenarios":  [
+                      {
+                          "name":  "Greenfield",
+                          "decision":  "Start with a modular monolith and a thin vertical slice before optional distribution.",
+                          "constraints":  "Java/Spring/Angular/MySQL, bounded scope, human gates, no invented scale.",
+                          "outcome":  "Implemented core URL, redirect, analytics, testing, and evidence layers.",
+                          "risk":  "Scope growth and premature optimization remain open risks."
+                      },
+                      {
+                          "name":  "Brownfield",
+                          "decision":  "Add idempotent URL creation as a backward-compatible change.",
+                          "constraints":  "Existing clients remain valid; optional header; atomic persistence; expiry cleanup.",
+                          "outcome":  "Fingerprint, replay, conflict, migration, HTTP, and service coverage were added.",
+                          "risk":  "Docker-backed concurrency and rollback cases remain skipped."
+                      },
+                      {
+                          "name":  "Ambiguous",
+                          "decision":  "Interpret production-ready as production-conscious evidence, not production approval.",
+                          "constraints":  "Unknown identity, moderation, SLO, traffic, retention, and deployment environment.",
+                          "outcome":  "Assumptions and blockers are explicit instead of silently invented.",
+                          "risk":  "Human product, security, privacy, and operations decisions remain pending."
+                      },
+                      {
+                          "name":  "Comparison",
+                          "decision":  "Use the same evidence discipline while changing the engineering move by context.",
+                          "constraints":  "Greenfield optimizes sequencing, brownfield compatibility, ambiguous work reversible decisions.",
+                          "outcome":  "Traceability connects intent, implementation, tests, residual risk, and approval state.",
+                          "risk":  "Repository has no Git history, so provenance is artifact-based rather than commit-based."
+                      }
+                  ],
+    "aiTraceability":  {
+                           "accepted":  [
+                                            "Bounded modular-monolith implementation and typed Angular feature slices.",
+                                            "Risk-based backend, frontend, API, accessibility, responsive, and real-stack tests.",
+                                            "Sanitized build-time reviewer metadata and explicit honesty markers."
+                                        ],
+                           "edited":  [
+                                          "Generated recommendations were reconciled against actual controllers, migrations, tests, and quality evidence.",
+                                          "Security and readiness language was tightened to preserve blockers and pending approvals."
+                                      ],
+                           "rejected":  [
+                                            "Redis and distributed infrastructure without measured need.",
+                                            "Forced dependency updates without compatibility review or current supporting findings.",
+                                            "Fabricated portfolio entries, approvals, performance results, or production claims."
+                                        ],
+                           "excluded":  [
+                                            "Secrets, credentials, environment dumps, proprietary employer content, and unrestricted filesystem access.",
+                                            "Private chain-of-thought or fabricated AI chat transcripts."
+                                        ],
+                           "pendingHumanReview":  [
+                                                      "All engineer decisions and human approval gates.",
+                                                      "Contradictory dependency-audit output and residual security-risk disposition.",
+                                                      "Authentication, moderation, operations, privacy, and public-deployment decisions."
+                                                  ]
+                       },
+    "risks":  [
+                  {
+                      "id":  "RISK-004/005",
+                      "title":  "Open redirect and phishing abuse",
+                      "severity":  "CRITICAL",
+                      "status":  "OPEN",
+                      "mitigation":  "Controlled environment, scheme validation, rate limits, future moderation.",
+                      "residual":  "No reputation, takedown, or abuse operation exists."
+                  },
+                  {
+                      "id":  "RISK-006",
+                      "title":  "Single MySQL dependency",
+                      "severity":  "CRITICAL",
+                      "status":  "OPEN",
+                      "mitigation":  "Bounded pools/timeouts, safe errors, aggregate health.",
+                      "residual":  "No replica, failover, or tested recovery."
+                  },
+                  {
+                      "id":  "RISK-014",
+                      "title":  "Missing authentication and authorization",
+                      "severity":  "CRITICAL",
+                      "status":  "OPEN",
+                      "mitigation":  "Prototype banner and controlled-network restriction.",
+                      "residual":  "Public exposure is blocked."
+                  },
+                  {
+                      "id":  "RISK-017",
+                      "title":  "Dependency and supply-chain findings",
+                      "severity":  "HIGH",
+                      "status":  "OPEN",
+                      "mitigation":  "Pinned lockfiles, minimal dependencies, repeatable audits, and conservative status handling.",
+                      "residual":  "Clean npm ci reports 29 findings while immediate explicit audits report zero; current evidence is contradictory and remains FAIL."
+                  },
+                  {
+                      "id":  "RISK-018",
+                      "title":  "Migration and recovery failure",
+                      "severity":  "CRITICAL",
+                      "status":  "OPEN",
+                      "mitigation":  "Forward-only Flyway migrations and clean-schema validation.",
+                      "residual":  "Backup/restore and upgrade-path rehearsal are absent."
+                  },
+                  {
+                      "id":  "RISK-024/025",
+                      "title":  "Confidentiality or filesystem exposure",
+                      "severity":  "CRITICAL",
+                      "status":  "OPEN",
+                      "mitigation":  "Allowlisted generated metadata, fixed assets, empty portfolio.",
+                      "residual":  "Future generic viewers or unreviewed content could reopen exposure."
+                  }
+              ],
+    "decisions":  [
+                      {
+                          "id":  "ADR-001",
+                          "title":  "Short-code strategy",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "Random base62 codes with unique constraint and bounded retries.",
+                          "tradeoff":  "Simple and horizontally generatable; collisions require retry handling."
+                      },
+                      {
+                          "id":  "ADR-002",
+                          "title":  "MySQL source of truth",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "Relational constraints, UTC timestamps, and Flyway ownership.",
+                          "tradeoff":  "Strong fit for lifecycle consistency; creates a critical database dependency."
+                      },
+                      {
+                          "id":  "ADR-003",
+                          "title":  "Best-effort analytics",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "Redirect success is isolated from analytics failure.",
+                          "tradeoff":  "Availability wins over complete click accounting."
+                      },
+                      {
+                          "id":  "ADR-004",
+                          "title":  "Optional local cache",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "Disabled-by-default in-memory cache rather than baseline Redis.",
+                          "tradeoff":  "Low complexity; no shared cache or global invalidation."
+                      },
+                      {
+                          "id":  "ADR-005",
+                          "title":  "Privacy-minimized analytics",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "No raw IP persistence; coarse device and sanitized referrer derivation.",
+                          "tradeoff":  "Reduced privacy exposure; no unique-user or geography claims."
+                      },
+                      {
+                          "id":  "ADR-006",
+                          "title":  "Build-time project display",
+                          "status":  "ACCEPTED_DIRECTION",
+                          "summary":  "Fixed static metadata assets generated from allowlisted repository paths.",
+                          "tradeoff":  "Safe and deployable; not a live repository browser."
+                      }
+                  ],
+    "approvals":  [
+                      {
+                          "gate":  "Product scope and lifecycle semantics",
+                          "owner":  "Human product owner",
+                          "status":  "PENDING"
+                      },
+                      {
+                          "gate":  "Security, abuse, and dependency disposition",
+                          "owner":  "Human security owner",
+                          "status":  "PENDING"
+                      },
+                      {
+                          "gate":  "Privacy and retention",
+                          "owner":  "Human privacy owner",
+                          "status":  "PENDING"
+                      },
+                      {
+                          "gate":  "Operations, recovery, SLOs, and deployment",
+                          "owner":  "Human operations owner",
+                          "status":  "PENDING"
+                      },
+                      {
+                          "gate":  "Final code and production readiness",
+                          "owner":  "Human engineering reviewer",
+                          "status":  "PENDING"
+                      }
+                  ],
+    "limitations":  [
+                        "Management and analytics APIs are unauthenticated; public exposure is blocked.",
+                        "No moderation, reputation, takedown, or abuse-operations workflow exists.",
+                        "Current npm advisory output is contradictory, and container/base-image plus dedicated backend vulnerability scans are NOT_RUN.",
+                        "Nineteen Docker/Testcontainers JUnit cases were skipped in the latest local backend run.",
+                        "No tested backup/restore, failover, disaster recovery, SLO, capacity, load, soak, or chaos evidence exists.",
+                        "Browser evidence is Chrome-only; manual screen-reader and cross-browser validation are NOT_RUN.",
+                        "All human approval gates remain PENDING."
+                    ],
+    "readiness":  {
+                      "demoStatus":  "READY_FOR_DEMO",
+                      "productionStatus":  "NOT_PRODUCTION_READY",
+                      "environment":  "Controlled local prototype",
+                      "version":  "0.1.0",
+                      "cache":  "DISABLED_BY_DEFAULT",
+                      "lastValidated":  "2026-08-07",
+                      "databaseEvidence":  "MySQL 8.4.10 with Flyway V1-V4 passed nine prior real-stack browser flows; current live DB component detail is intentionally not exposed.",
+                      "functionalChecklist":  [
+                                                  {
+                                                      "item":  "Create and manage URLs",
+                                                      "status":  "PASS",
+                                                      "evidence":  "Unit, API, and prior real-stack browser evidence."
+                                                  },
+                                                  {
+                                                      "item":  "Redirect and lifecycle enforcement",
+                                                      "status":  "PASS",
+                                                      "evidence":  "HTTP/service and prior real-stack browser evidence."
+                                                  },
+                                                  {
+                                                      "item":  "Analytics summaries",
+                                                      "status":  "PASS",
+                                                      "evidence":  "Unit/API and prior real-stack browser evidence; delivery remains best effort."
+                                                  },
+                                                  {
+                                                      "item":  "Authentication and authorization",
+                                                      "status":  "FAIL",
+                                                      "evidence":  "Not implemented; public exposure prohibited."
+                                                  },
+                                                  {
+                                                      "item":  "Backup, restore, failover, and SLOs",
+                                                      "status":  "NOT_RUN",
+                                                      "evidence":  "Requires an approved target environment and human operations plan."
+                                                  }
+                                              ],
+                      "blockers":  [
+                                       "Authentication, authorization, ownership, and accountable actors are absent.",
+                                       "Abuse prevention, moderation, and takedown operations are absent.",
+                                       "Dependency security output is contradictory and requires human/toolchain reconciliation.",
+                                       "Recovery, capacity, SLO, cross-browser, and manual accessibility evidence is incomplete.",
+                                       "All human approvals remain pending."
+                                   ],
+                      "nextActions":  [
+                                          "Human security review and dependency-audit/toolchain reconciliation.",
+                                          "Define identity, ownership, moderation, and abuse-response requirements.",
+                                          "Run Docker-backed integration, container smoke, recovery, and clean-checkout CI evidence.",
+                                          "Approve deployment topology, secrets, TLS, observability, backups, SLOs, and rollback."
+                                      ]
+                  },
+    "quality":  {
+                    "backend":  {
+                                    "generatedAt":  "2026-08-07T13:25:02Z",
+                                    "compile":  "PASS",
+                                    "unitTests":  "PASS",
+                                    "integrationTests":  "NOT_RUN",
+                                    "apiTests":  "PASS",
+                                    "flywayValidation":  "NOT_RUN",
+                                    "coverage":  "PASS",
+                                    "coverageLinePercent":  78.46,
+                                    "staticAnalysis":  "PASS",
+                                    "dependencyCheck":  "PASS",
+                                    "testCount":  140,
+                                    "executedTestCount":  121,
+                                    "skippedTestCount":  19
+                                },
+                    "frontend":  {
+                                     "generatedAt":  "2026-08-07T13:35:21Z",
+                                     "installLockfile":  "PASS",
+                                     "typeScript":  "PASS",
+                                     "lint":  "PASS",
+                                     "unitTests":  "PASS",
+                                     "coverage":  "PASS",
+                                     "productionBuild":  "PASS",
+                                     "e2eTests":  "PASS",
+                                     "accessibilityChecks":  "PASS",
+                                     "responsiveChecks":  "PASS",
+                                     "fullStackSmokeTest":  "PASS",
+                                     "unitTestCount":  83,
+                                     "coverageStatementsPercent":  85.62,
+                                     "coverageBranchesPercent":  73.89,
+                                     "coverageFunctionsPercent":  77.94,
+                                     "coverageLinesPercent":  86.61,
+                                     "controlledBrowserTestCount":  8,
+                                     "productionInitialBundleRawKb":  307.17,
+                                     "productionInitialBundleTransferKb":  88.30
+                                 },
+                    "securityReview":  {
+                                           "status":  "FAIL",
+                                           "productionFindings":  0,
+                                           "productionSeverity":  "INCONSISTENT",
+                                           "fullTreeFindings":  29,
+                                           "note":  "Current npm output is contradictory: clean npm ci reported 29 total findings, while immediate explicit production and full-tree npm audit commands reported zero. Conservatively FAIL pending toolchain/advisory reconciliation."
+                                       },
+                    "dockerBuild":  "NOT_RUN",
+                    "dockerSmoke":  "NOT_RUN",
+                    "ciValidation":  "NOT_RUN",
+                    "overallQuality":  "FAIL"
+                }
+}

@@ -1,0 +1,14 @@
+<span
+  class="status-badge"
+  [class.status-badge--active]="appearance() === 'active'"
+  [class.status-badge--disabled]="appearance() === 'disabled'"
+  [class.status-badge--expired]="appearance() === 'expired'"
+  [class.status-badge--deleted]="appearance() === 'deleted'"
+>
+  <span
+    class="status-badge__indicator"
+    aria-hidden="true"
+  ></span>
+
+  {{ label() }}
+</span>

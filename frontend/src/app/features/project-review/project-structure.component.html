@@ -1,0 +1,145 @@
+<div class="project-structure-header">
+  <div>
+    <h2>Project Structure</h2>
+
+    <p>
+      Expand folders to inspect the main frontend and
+      backend organization.
+    </p>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="project-structure-state">
+    Loading project structure...
+  </div>
+} @else if (loadFailed()) {
+  <div class="project-structure-error">
+    <div>
+      <strong>
+        Project structure unavailable
+      </strong>
+
+      <p>
+        The structure metadata could not be loaded.
+      </p>
+    </div>
+
+    <button
+      class="button button--secondary button--small"
+      type="button"
+      (click)="loadStructure()"
+    >
+      <i
+        class="bi bi-arrow-clockwise"
+        aria-hidden="true"
+      ></i>
+
+      Retry
+    </button>
+  </div>
+} @else {
+  @if (structure(); as project) {
+    @if (
+      project.scope ||
+      project.exclusions?.length
+    ) {
+      <div class="project-structure-meta">
+        @if (project.scope) {
+          <span>
+            Scope: {{ project.scope }}
+          </span>
+        }
+
+        @if (project.exclusions?.length) {
+          <span>
+            Excludes:
+            {{ project.exclusions?.join(', ') }}
+          </span>
+        }
+      </div>
+    }
+
+    <div class="tree-shell">
+      <ul
+        class="project-tree"
+        aria-label="Project structure"
+      >
+        @for (
+          node of visibleNodes();
+          track node.path
+        ) {
+          <li
+            class="tree-row"
+            [style.--tree-level]="node.level"
+          >
+            @if (node.type === 'directory') {
+              <button
+                class="tree-item tree-item--directory"
+                type="button"
+                [attr.aria-expanded]="
+                  isExpanded(node.path)
+                "
+                (click)="toggleNode(node)"
+              >
+                <span class="tree-chevron">
+                  @if (isExpanded(node.path)) {
+                    <i
+                      class="bi bi-chevron-down"
+                      aria-hidden="true"
+                    ></i>
+                  } @else {
+                    <i
+                      class="bi bi-chevron-right"
+                      aria-hidden="true"
+                    ></i>
+                  }
+                </span>
+
+                <span class="tree-icon">
+                  @if (isExpanded(node.path)) {
+                    <i
+                      class="bi bi-folder2-open"
+                      aria-hidden="true"
+                    ></i>
+                  } @else {
+                    <i
+                      class="bi bi-folder"
+                      aria-hidden="true"
+                    ></i>
+                  }
+                </span>
+
+                <span class="tree-name">
+                  {{ node.name }}
+                </span>
+              </button>
+            } @else {
+              <div
+                class="tree-item tree-item--file"
+              >
+                <span
+                  class="tree-chevron"
+                  aria-hidden="true"
+                ></span>
+
+                <span
+                  class="tree-icon tree-icon--file"
+                >
+                  <i
+                    class="bi bi-file-earmark"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+
+                <span class="tree-name">
+                  {{ node.name }}
+                </span>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+}

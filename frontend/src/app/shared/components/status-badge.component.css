@@ -1,0 +1,44 @@
+:host {
+  display: inline-flex;
+}
+
+.status-badge {
+  display: inline-flex;
+  min-height: 1.65rem;
+  align-items: center;
+  gap: 0.38rem;
+  border-radius: 999px;
+  padding: 0.24rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-badge__indicator {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 0.42rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-badge--active {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.status-badge--disabled {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.status-badge--expired {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.status-badge--deleted {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}

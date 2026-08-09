@@ -1,0 +1,57 @@
+<section
+  class="error-state"
+  role="alert"
+>
+  <span
+    class="error-state__icon"
+    aria-hidden="true"
+  >
+    <i
+      class="bi bi-exclamation-triangle"
+    ></i>
+  </span>
+
+  <div class="error-state__content">
+    <h2>{{ title() }}</h2>
+
+    <p>
+      {{ error().message }}
+    </p>
+
+    <div class="error-meta">
+      <span>
+        {{ error().code }}
+      </span>
+
+      @if (error().correlationId) {
+        <span>
+          Correlation ID:
+          {{ error().correlationId }}
+        </span>
+      }
+
+      @if (error().retryAfterSeconds !== null) {
+        <span>
+          Retry in approximately
+          {{ error().retryAfterSeconds }}
+          seconds
+        </span>
+      }
+    </div>
+  </div>
+
+  @if (showRetry()) {
+    <button
+      class="button button--secondary button--small"
+      type="button"
+      (click)="retry.emit()"
+    >
+      <i
+        class="bi bi-arrow-clockwise"
+        aria-hidden="true"
+      ></i>
+
+      Retry
+    </button>
+  }
+</section>

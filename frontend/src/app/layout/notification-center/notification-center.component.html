@@ -1,0 +1,66 @@
+<div
+  class="notification-center"
+  aria-live="polite"
+  aria-relevant="additions removals"
+>
+  @for (
+    notification of notifications();
+    track notification.id
+  ) {
+    <article
+      class="notification"
+      [class.notification--success]="notification.tone === 'success'"
+      [class.notification--warning]="notification.tone === 'warning'"
+      [class.notification--error]="notification.tone === 'error'"
+      [attr.role]="
+        notification.tone === 'error'
+          ? 'alert'
+          : 'status'
+      "
+    >
+      <span
+        class="notification__icon"
+        aria-hidden="true"
+      >
+        @switch (notification.tone) {
+          @case ('success') {
+            <i
+              class="bi bi-check-circle"
+            ></i>
+          }
+
+          @case ('warning') {
+            <i
+              class="bi bi-exclamation-triangle"
+            ></i>
+          }
+
+          @case ('error') {
+            <i
+              class="bi bi-x-circle"
+            ></i>
+          }
+        }
+      </span>
+
+      <p>
+        {{ notification.message }}
+      </p>
+
+      <button
+        class="notification__close"
+        type="button"
+        [attr.aria-label]="
+          'Dismiss notification: ' +
+          notification.message
+        "
+        (click)="dismiss(notification)"
+      >
+        <i
+          class="bi bi-x-lg"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </article>
+  }
+</div>

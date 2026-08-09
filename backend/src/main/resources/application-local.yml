@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:url_shortener}?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=${DB_CONNECT_TIMEOUT_MS:3000}&socketTimeout=${DB_SOCKET_TIMEOUT_MS:5000}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+logging:
+  level:
+    com.example.urlshortener: INFO

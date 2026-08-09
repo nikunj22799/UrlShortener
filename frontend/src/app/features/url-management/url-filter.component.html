@@ -1,0 +1,220 @@
+<form
+  class="url-filter"
+  [formGroup]="form"
+  (ngSubmit)="apply()"
+><div class="filter-header">
+  <div>
+    <h2>Filters</h2>
+
+    <p>
+      Search and refine URL records.
+    </p>
+  </div>
+
+  <button
+    class="reset-button"
+    type="button"
+    (click)="reset()"
+  >
+    <i
+      class="bi bi-arrow-counterclockwise"
+      aria-hidden="true"
+    ></i>
+
+    Reset
+  </button>
+</div>
+
+<div class="filters-grid">
+  <div class="field">
+    <label for="management-search">
+      Search
+    </label>
+
+    <div class="search-input">
+      <i
+        class="bi bi-search"
+        aria-hidden="true"
+      ></i>
+
+      <input
+        id="management-search"
+        type="search"
+        formControlName="search"
+        maxlength="200"
+        autocomplete="off"
+        placeholder="Short code or destination"
+      >
+
+      @if (form.controls.search.value) {
+        <button
+          class="clear-search"
+          type="button"
+          aria-label="Clear search"
+          (click)="clearSearch()"
+        >
+          ×
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="management-status">
+      Status
+    </label>
+
+    <select
+      id="management-status"
+      formControlName="status"
+    >
+      <option value="">
+        Non-deleted
+      </option>
+
+      <option value="ACTIVE">
+        Active
+      </option>
+
+      <option value="DISABLED">
+        Disabled
+      </option>
+
+      <option value="DELETED">
+        Deleted
+      </option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="management-expired">
+      Expiration
+    </label>
+
+    <select
+      id="management-expired"
+      formControlName="expired"
+      [disabled]="
+        form.controls.status.value === 'DELETED'
+      "
+      aria-describedby="management-expired-hint"
+    >
+      <option value="">
+        Any
+      </option>
+
+      <option value="false">
+        Not expired
+      </option>
+
+      <option value="true">
+        Expired
+      </option>
+    </select>
+
+    <p
+      id="management-expired-hint"
+      class="field-hint"
+    >
+      @if (
+        form.controls.status.value === 'DELETED'
+      ) {
+        Expiration does not apply to deleted records.
+      } @else {
+        Filter URLs by current expiration state.
+      }
+    </p>
+  </div>
+
+  <div class="field">
+    <label for="management-sort">
+      Sort by
+    </label>
+
+    <select
+      id="management-sort"
+      formControlName="sort"
+    >
+      <option value="createdAt">
+        Created
+      </option>
+
+      <option value="updatedAt">
+        Updated
+      </option>
+
+      <option value="expiresAt">
+        Expiration
+      </option>
+
+      <option value="shortCode">
+        Short code
+      </option>
+
+      <option value="status">
+        Status
+      </option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="management-direction">
+      Direction
+    </label>
+
+    <select
+      id="management-direction"
+      formControlName="direction"
+    >
+      <option value="desc">
+        Descending
+      </option>
+
+      <option value="asc">
+        Ascending
+      </option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="management-size">
+      Rows
+    </label>
+
+    <select
+      id="management-size"
+      formControlName="size"
+    >
+      <option value="10">
+        10
+      </option>
+
+      <option value="20">
+        20
+      </option>
+
+      <option value="50">
+        50
+      </option>
+
+      <option value="100">
+        100
+      </option>
+    </select>
+  </div>
+</div>
+
+<footer class="filter-actions">
+  <button
+    class="button"
+    type="submit"
+  >
+    <i
+      class="bi bi-funnel"
+      aria-hidden="true"
+    ></i>
+
+    Apply filters
+  </button>
+</footer>
+</form>

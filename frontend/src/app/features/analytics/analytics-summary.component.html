@@ -1,0 +1,67 @@
+<section
+  class="summary-grid"
+  aria-label="Analytics summary"
+>
+  <article class="summary-card">
+    <span class="summary-label">
+      Total Clicks
+    </span>
+
+    <strong class="summary-value">
+      {{ summary().totalClicks }}
+    </strong>
+
+    <span class="summary-description">
+      Redirect events in this range
+    </span>
+  </article>
+
+  <article class="summary-card">
+    <span class="summary-label">
+      Last Event
+    </span>
+
+    <strong class="summary-value summary-value--date">
+      @if (summary().lastEventAt) {
+        {{
+          summary().lastEventAt
+            | date: 'MMM d, y, h:mm a': 'UTC'
+        }}
+      } @else {
+        No activity
+      }
+    </strong>
+
+    <span class="summary-description">
+      Displayed in UTC
+    </span>
+  </article>
+
+  <article class="summary-card">
+    <span class="summary-label">
+      Consistency
+    </span>
+
+    <strong class="summary-value summary-value--text">
+      {{ summary().consistency }}
+    </strong>
+
+    <span class="summary-description">
+      Analytics availability model
+    </span>
+  </article>
+
+  <article class="summary-card">
+    <span class="summary-label">
+      Completeness
+    </span>
+
+    <strong class="summary-value summary-value--text">
+      {{ summary().completeness }}
+    </strong>
+
+    <span class="summary-description">
+      Event collection guarantee
+    </span>
+  </article>
+</section>

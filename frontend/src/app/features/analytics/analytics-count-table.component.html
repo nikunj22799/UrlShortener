@@ -1,0 +1,53 @@
+<section class="count-card">
+  <header class="count-card__header">
+    <div>
+      <h2>{{ title() }}</h2>
+
+      @if (description()) {
+        <p>{{ description() }}</p>
+      }
+    </div>
+  </header>
+
+  @if (rows().length === 0) {
+    <div class="empty-state">
+      No data available for this range.
+    </div>
+  } @else {
+    <div class="count-list">
+      @for (
+        row of rows();
+        track row.name
+      ) {
+        <div class="count-row">
+          <div class="count-row__label">
+            <span
+              class="count-name"
+              [title]="row.name"
+            >
+              {{ row.name }}
+            </span>
+
+            <strong>
+              {{ row.clicks }}
+            </strong>
+          </div>
+
+          <div
+            class="count-bar"
+            aria-hidden="true"
+          >
+            <span
+              [style.width.%]="
+                percentage(
+                  row.clicks,
+                  rows()
+                )
+              "
+            ></span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

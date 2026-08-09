@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.count-card {
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.count-card__header {
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.2rem;
+}
+
+.count-card__header h2 {
+  margin-bottom: 0.15rem;
+  font-size: 0.95rem;
+}
+
+.count-card__header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+}
+
+.count-list {
+  display: grid;
+}
+
+.count-row {
+  display: grid;
+  gap: 0.45rem;
+  border-bottom: 1px solid #edf1f5;
+  padding: 0.85rem 1.2rem;
+}
+
+.count-row:last-child {
+  border-bottom: 0;
+}
+
+.count-row:hover {
+  background: #f8fbff;
+}
+
+.count-row__label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.count-name {
+  overflow: hidden;
+  color: #334155;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count-row__label strong {
+  flex: 0 0 auto;
+  color: #172033;
+  font-size: 0.8rem;
+}
+
+.count-bar {
+  height: 0.3rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8edf4;
+}
+
+.count-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-primary),
+      #4f83ff
+    );
+}
+
+.empty-state {
+  padding: 2rem 1rem;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 30rem) {
+  .count-card__header,
+  .count-row {
+    padding-inline: 1rem;
+  }
+}

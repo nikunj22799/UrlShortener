@@ -1,0 +1,73 @@
+<div
+  class="dialog-backdrop"
+  (click)="dismiss()"
+>
+  <section
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="dialogId() + '-title'"
+    [attr.aria-describedby]="dialogId() + '-message'"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="dialog-header">
+      <span
+        class="dialog-icon"
+        [class.dialog-icon--danger]="destructive()"
+        aria-hidden="true"
+      >
+        <i
+          class="bi bi-exclamation-triangle"
+        ></i>
+      </span>
+
+      <div>
+        <h2 [id]="dialogId() + '-title'">
+          {{ title() }}
+        </h2>
+
+        <p [id]="dialogId() + '-message'">
+          {{ message() }}
+        </p>
+      </div>
+
+      <button
+        class="dialog-close"
+        type="button"
+        [disabled]="busy()"
+        aria-label="Close confirmation dialog"
+        (click)="dismiss()"
+      >
+        <i
+          class="bi bi-x-lg"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </header>
+
+    <footer class="dialog-actions">
+      <button
+        class="button button--secondary"
+        type="button"
+        [disabled]="busy()"
+        (click)="dismiss()"
+      >
+        {{ cancelLabel() }}
+      </button>
+
+      <button
+        class="button"
+        [class.button--danger]="destructive()"
+        type="button"
+        [disabled]="busy()"
+        (click)="confirm()"
+      >
+        {{
+          busy()
+            ? 'Processing...'
+            : confirmLabel()
+        }}
+      </button>
+    </footer>
+  </section>
+</div>

@@ -1,0 +1,204 @@
+<header class="page-header">
+  <div>
+    <h1>
+      Manage URLs
+    </h1>
+
+    <p>
+      Search, filter, and manage
+      shortened URLs stored by the
+      backend.
+    </p>
+  </div>
+
+  <a
+    class="button"
+    routerLink="/urls/new"
+  >
+    <i
+      class="bi bi-plus-lg"
+      aria-hidden="true"
+    ></i>
+
+    Create URL
+  </a>
+</header>
+
+<app-url-filter
+  [query]="queryState()"
+  (filtersApplied)="applyFilters($event)"
+  (filtersReset)="resetFilters()"
+/>
+
+@if (
+  loadError();
+  as currentError
+) {
+  <app-error-state
+    [error]="currentError"
+    title="URLs unavailable"
+    (retry)="reload()"
+  />
+} @else {
+  @if (loading()) {
+    <app-loading-indicator
+      label="Loading URLs..."
+    />
+  } @else {
+    @if (
+      page();
+      as currentPage
+    ) {
+      <section class="url-results">
+        <header class="results-header">
+          <div>
+            <strong>
+              {{
+                currentPage.totalElements
+              }}
+            </strong>
+
+            <span>
+              {{
+                currentPage.totalElements ===
+                1
+                  ? 'URL'
+                  : 'URLs'
+              }}
+            </span>
+          </div>
+
+          <span>
+            Page
+            {{
+              currentPage.page + 1
+            }}
+            of
+            {{
+              currentPage.totalPages ||
+                1
+            }}
+          </span>
+        </header>
+
+        @if (
+          currentPage.items.length ===
+          0
+        ) {
+          <app-empty-state
+            title="No matching URLs"
+            message="Change your filters or create a new short URL."
+          >
+            <a
+              class="button"
+              routerLink="/urls/new"
+            >
+              <i
+                class="bi bi-plus-lg"
+                aria-hidden="true"
+              ></i>
+
+              Create URL
+            </a>
+          </app-empty-state>
+        } @else {
+          <app-url-table
+            [urls]="currentPage.items"
+            [busyId]="busyId()"
+            (actionRequested)="
+              handleTableAction($event)
+            "
+          />
+
+          <nav
+            class="pagination"
+            aria-label="URL result pages"
+          >
+            <button
+              class="button button--secondary button--small"
+              type="button"
+              [disabled]="
+                currentPage.page === 0
+              "
+              (click)="
+                goToPage(
+                  currentPage.page - 1
+                )
+              "
+            >
+              Previous
+            </button>
+
+            <span>
+              Page
+              {{
+                currentPage.page + 1
+              }}
+              of
+              {{
+                currentPage.totalPages
+              }}
+            </span>
+
+            <button
+              class="button button--secondary button--small"
+              type="button"
+              [disabled]="
+                currentPage.page + 1 >=
+                currentPage.totalPages
+              "
+              (click)="
+                goToPage(
+                  currentPage.page + 1
+                )
+              "
+            >
+              Next
+            </button>
+          </nav>
+        }
+      </section>
+    }
+  }
+}
+
+@if (
+  mutationError();
+  as currentError
+) {
+  <app-error-state
+    [error]="currentError"
+    title="Change was not applied"
+    (retry)="reload()"
+  />
+}
+
+@if (
+  pendingAction();
+  as pending
+) {
+  <app-confirmation-dialog
+    dialogId="management-confirmation"
+    [title]="
+      pending.type === 'delete'
+        ? 'Delete short URL?'
+        : 'Disable short URL?'
+    "
+    [message]="
+      confirmationMessage(pending)
+    "
+    [confirmLabel]="
+      pending.type === 'delete'
+        ? 'Delete URL'
+        : 'Disable URL'
+    "
+    [destructive]="
+      pending.type === 'delete'
+    "
+    [busy]="
+      busyId() === pending.url.id
+    "
+    (dismissed)="cancelAction()"
+    (accepted)="confirmAction()"
+  />
+}

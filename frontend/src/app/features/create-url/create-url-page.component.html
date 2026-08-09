@@ -1,0 +1,385 @@
+<a
+  class="button button--secondary"
+  routerLink="/urls"
+>
+  View URLs
+
+  <i
+    class="bi bi-arrow-right"
+    aria-hidden="true"
+  ></i>
+</a>
+
+@if (createdUrl(); as url) {
+  <div class="success-heading">
+    <div>
+      <p class="eyebrow">
+        {{
+          replayed()
+            ? 'Safe retry replayed'
+            : 'URL created'
+        }}
+      </p>
+
+      <h2>Your short URL is ready</h2>
+
+      <p>
+        The link can now be copied, opened, or managed
+        from URL Management.
+      </p>
+    </div>
+
+    <app-status-badge
+      [status]="url.status"
+      [expired]="url.expired"
+    />
+  </div>
+
+  <div class="short-url-panel">
+    <div>
+      <span class="short-url-label">
+        Short URL
+      </span>
+
+      <a
+        class="short-url-value"
+        [href]="url.shortUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ url.shortUrl }}
+      </a>
+    </div>
+
+    <button
+      class="copy-button"
+      type="button"
+      (click)="copyShortUrl(url.shortUrl)"
+      aria-label="Copy short URL"
+    >
+      <i
+        class="bi bi-copy"
+        aria-hidden="true"
+      ></i>
+
+      Copy
+    </button>
+  </div>
+
+  <dl class="result-details">
+    <div>
+      <dt>Short code</dt>
+      <dd>{{ url.shortCode }}</dd>
+    </div>
+
+    <div>
+      <dt>Type</dt>
+
+      <dd>
+        {{
+          url.codeType === 'CUSTOM_ALIAS'
+            ? 'Custom alias'
+            : 'Generated'
+        }}
+      </dd>
+    </div>
+
+    <div class="result-details__wide">
+      <dt>Destination</dt>
+
+      <dd class="break-anywhere">
+        {{ url.originalUrl }}
+      </dd>
+    </div>
+
+    <div>
+      <dt>Expiration</dt>
+
+      <dd>
+        {{
+          url.expiresAt
+            ? (url.expiresAt | date: 'medium')
+            : 'No expiration'
+        }}
+      </dd>
+    </div>
+
+    <div>
+      <dt>Created</dt>
+
+      <dd>
+        {{ url.createdAt | date: 'medium' }}
+      </dd>
+    </div>
+  </dl>
+
+  <div class="result-actions">
+    <a
+      class="button"
+      [href]="url.shortUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i
+        class="bi bi-box-arrow-up-right"
+        aria-hidden="true"
+      ></i>
+
+      Open URL
+    </a>
+
+    <a
+      class="button button--secondary"
+      [routerLink]="['/urls', url.id]"
+    >
+      View details
+    </a>
+
+    <button
+      class="button button--secondary"
+      type="button"
+      (click)="createAnother()"
+    >
+      <i
+        class="bi bi-arrow-counterclockwise"
+        aria-hidden="true"
+      ></i>
+
+      Create another
+    </button>
+  </div>
+} @else {
+  <section>
+    <header>
+      <div>
+        <h2>Link details</h2>
+
+        <p>
+          Enter the destination and optionally customize
+          how the short URL behaves.
+        </p>
+      </div>
+    </header>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+    >
+      <div class="field">
+        <label for="original-url">
+          Original URL
+          <span class="required-marker">*</span>
+        </label>
+
+        <input
+          id="original-url"
+          type="url"
+          formControlName="originalUrl"
+          autocomplete="url"
+          maxlength="2048"
+          placeholder="https://example.com/resource"
+          [attr.aria-invalid]="showError('originalUrl')"
+          aria-describedby="original-url-hint original-url-error"
+        >
+
+        <p
+          id="original-url-hint"
+          class="field-hint"
+        >
+          Enter an absolute HTTP or HTTPS destination.
+        </p>
+
+        @if (showError('originalUrl')) {
+          <p
+            id="original-url-error"
+            class="field-error"
+          >
+            {{ originalUrlError() }}
+          </p>
+        }
+      </div>
+
+      <div class="form-grid form-grid--optional">
+        <div class="field">
+          <label for="custom-alias">
+            Custom alias
+
+            <span class="optional-label">
+              Optional
+            </span>
+          </label>
+
+          <div class="alias-input">
+            <span aria-hidden="true">
+              /
+            </span>
+
+            <input
+              id="custom-alias"
+              type="text"
+              formControlName="customAlias"
+              minlength="3"
+              maxlength="48"
+              autocomplete="off"
+              placeholder="release-notes"
+              [attr.aria-invalid]="
+                showError('customAlias')
+              "
+              aria-describedby="custom-alias-hint custom-alias-error"
+            >
+          </div>
+
+          <p
+            id="custom-alias-hint"
+            class="field-hint"
+          >
+            3 to 48 letters, numbers, or hyphens.
+            Aliases are stored in lowercase.
+          </p>
+
+          @if (showError('customAlias')) {
+            <p
+              id="custom-alias-error"
+              class="field-error"
+            >
+              {{ aliasError() }}
+            </p>
+          }
+        </div>
+
+        <div class="field">
+          <label for="expiration">
+            Expiration
+
+            <span class="optional-label">
+              Optional
+            </span>
+          </label>
+
+          <input
+            id="expiration"
+            type="datetime-local"
+            formControlName="expiresAt"
+            [attr.aria-invalid]="
+              showError('expiresAt')
+            "
+            aria-describedby="expiration-hint expiration-error"
+          >
+
+          <p
+            id="expiration-hint"
+            class="field-hint"
+          >
+            Local time is converted to UTC when submitted.
+          </p>
+
+          @if (showError('expiresAt')) {
+            <p
+              id="expiration-error"
+              class="field-error"
+            >
+              Expiration must be a valid future date
+              and time.
+            </p>
+          }
+        </div>
+      </div>
+
+      @if (error(); as currentError) {
+        <app-error-state
+          [error]="currentError"
+          title="URL was not created"
+          [showRetry]="false"
+        />
+      }
+
+      <footer class="form-actions">
+        <a
+          class="button button--secondary"
+          routerLink="/urls"
+        >
+          Cancel
+        </a>
+
+        <button
+          class="button"
+          type="submit"
+          [disabled]="submitting()"
+        >
+          @if (submitting()) {
+            Creating...
+          } @else {
+            <i
+              class="bi bi-plus-lg"
+              aria-hidden="true"
+            ></i>
+
+            Create short URL
+          }
+        </button>
+      </footer>
+    </form>
+  </section>
+
+  <aside class="guidance-panel">
+    <div
+      class="guidance-icon"
+      aria-hidden="true"
+    >
+      <i class="bi bi-link-45deg"></i>
+    </div>
+
+    <h2>How it works</h2>
+
+    <ol class="guidance-list">
+      <li>
+        <span>1</span>
+
+        <div>
+          <strong>Add a destination</strong>
+
+          <p>
+            Enter the HTTP or HTTPS URL you want the
+            short link to redirect to.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span>2</span>
+
+        <div>
+          <strong>Customize if needed</strong>
+
+          <p>
+            Add an alias or expiration only when the
+            link requires it.
+          </p>
+        </div>
+      </li>
+
+      <li>
+        <span>3</span>
+
+        <div>
+          <strong>Create and share</strong>
+
+          <p>
+            The backend creates the short code and the
+            resulting URL is ready immediately.
+          </p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="guidance-note">
+      <strong>Safe retries</strong>
+
+      <p>
+        Repeating the same submission uses the same
+        idempotency key until the request changes.
+      </p>
+    </div>
+  </aside>
+}

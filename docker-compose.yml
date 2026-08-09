@@ -1,0 +1,68 @@
+name: link-operations
+
+services:
+  db:
+    image: mysql:8.4.10
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-url_shortener}
+      MYSQL_USER: ${DB_USERNAME:-url_shortener}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-local-development-only}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local-root-only}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    networks: [application]
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-url_shortener}
+      DB_USERNAME: ${DB_USERNAME:-url_shortener}
+      DB_PASSWORD: ${DB_PASSWORD:-local-development-only}
+      APP_BASE_URL: http://localhost:${BACKEND_PORT:-8080}
+      CACHE_ENABLED: ${CACHE_ENABLED:-false}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+      start_period: 30s
+    networks: [application]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-4200}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [application]
+
+volumes:
+  mysql-data:
+
+networks:
+  application:
+    driver: bridge

@@ -1,0 +1,992 @@
+openapi: 3.1.0
+info:
+  title: AI-Assisted URL Shortener API
+  version: 0.3.0-review
+  description: |
+    Canonical contract for the implemented modular-monolith URL Shortener API.
+    Human contract and security approval remain pending; documented runtime
+    claims require the separate validation evidence.
+    Management APIs are unauthenticated only for the controlled interview prototype
+    and are not production-ready. Redis is never required for contract behavior.
+servers:
+  - url: http://localhost:8080
+    description: Local development placeholder
+tags:
+  - name: URLs
+  - name: Redirect
+  - name: Analytics
+paths:
+  /api/v1/urls:
+    post:
+      tags: [URLs]
+      operationId: createUrl
+      summary: Create a shortened URL
+      description: |
+        Creates a new link. Equal destination URLs are not deduplicated. Optional
+        database-backed idempotency support does not change the
+        core behavior when the header is omitted.
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlCreateRequest'
+            example:
+              originalUrl: https://example.com/products?id=123
+              customAlias: product-123
+              expiresAt: '2026-12-31T23:59:59Z'
+      responses:
+        '201':
+          $ref: '#/components/responses/UrlCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    get:
+      tags: [URLs]
+      operationId: searchUrls
+      summary: Search and page shortened URLs
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: page
+          in: query
+          description: Zero-based page number.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: Page size, bounded to 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: status
+          in: query
+          description: Lifecycle status. Omit to exclude deleted links by default.
+          schema:
+            $ref: '#/components/schemas/LifecycleStatus'
+        - name: search
+          in: query
+          description: Trimmed short-code/alias or destination text search.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 200
+        - name: sort
+          in: query
+          schema:
+            $ref: '#/components/schemas/UrlSortField'
+        - name: direction
+          in: query
+          schema:
+            $ref: '#/components/schemas/SortDirection'
+        - name: expired
+          in: query
+          description: Derived expiration filter. Invalid with status DELETED.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: A deterministic page of links.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    get:
+      tags: [URLs]
+      operationId: getUrl
+      summary: Get one shortened URL
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          $ref: '#/components/responses/UrlOk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    patch:
+      tags: [URLs]
+      operationId: updateUrlExpiration
+      summary: Set or remove link expiration
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlExpirationPatch'
+            examples:
+              remove:
+                value:
+                  expiresAt: null
+              set:
+                value:
+                  expiresAt: '2026-12-31T23:59:59Z'
+      responses:
+        '200':
+          $ref: '#/components/responses/UrlOk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '410':
+          $ref: '#/components/responses/Gone'
+        '428':
+          $ref: '#/components/responses/PreconditionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    delete:
+      tags: [URLs]
+      operationId: deleteUrl
+      summary: Soft-delete a shortened URL
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '204':
+          description: Link is soft-deleted. A repeated delete is also successful.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '428':
+          $ref: '#/components/responses/PreconditionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}/disable:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    post:
+      tags: [URLs]
+      operationId: disableUrl
+      summary: Disable a shortened URL
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          $ref: '#/components/responses/UrlOk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '410':
+          $ref: '#/components/responses/Gone'
+        '428':
+          $ref: '#/components/responses/PreconditionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}/enable:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    post:
+      tags: [URLs]
+      operationId: enableUrl
+      summary: Enable a shortened URL without changing expiration
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          $ref: '#/components/responses/UrlOk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '410':
+          $ref: '#/components/responses/Gone'
+        '428':
+          $ref: '#/components/responses/PreconditionRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /r/{shortCode}:
+    parameters:
+      - $ref: '#/components/parameters/ShortCode'
+    get:
+      tags: [Redirect]
+      operationId: redirectByShortCode
+      summary: Redirect an eligible short code
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '302':
+          $ref: '#/components/responses/RedirectFound'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '410':
+          $ref: '#/components/responses/Gone'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    head:
+      tags: [Redirect]
+      operationId: inspectRedirectByShortCode
+      summary: Resolve without recording a click or returning a body
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '302':
+          $ref: '#/components/responses/RedirectFound'
+        '404':
+          description: Missing or publicly masked disabled link; no response body for HEAD.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '410':
+          description: Expired or deleted link; no response body for HEAD.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '429':
+          description: Rate limited; no response body for HEAD.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+        '500':
+          description: Unexpected failure; no response body for HEAD.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+        '503':
+          description: Required dependency unavailable; no response body for HEAD.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+  /api/v1/urls/{id}/analytics/summary:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    get:
+      tags: [Analytics]
+      operationId: getAnalyticsSummary
+      summary: Get total redirect events for a UTC range
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: Analytics summary.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}/analytics/timeseries:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    get:
+      tags: [Analytics]
+      operationId: getAnalyticsTimeseries
+      summary: Get hourly or daily redirect-event buckets
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+        - name: bucket
+          in: query
+          schema:
+            $ref: '#/components/schemas/TimeBucket'
+      responses:
+        '200':
+          description: Continuous UTC event buckets, including zero-count buckets.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsTimeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}/analytics/referrers:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    get:
+      tags: [Analytics]
+      operationId: getAnalyticsReferrers
+      summary: Get bounded referrer-host counts
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Referrer-host aggregation.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsReferrers'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /api/v1/urls/{id}/analytics/devices:
+    parameters:
+      - $ref: '#/components/parameters/UrlId'
+    get:
+      tags: [Analytics]
+      operationId: getAnalyticsDevices
+      summary: Get derived device, browser, and operating-system counts
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: Privacy-minimized derived client-family aggregations.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsDevices'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+components:
+  parameters:
+    CorrelationId:
+      name: X-Correlation-ID
+      in: header
+      required: false
+      description: Optional safe correlation value. Invalid values are replaced by the server.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 64
+        pattern: '^[A-Za-z0-9._-]+$'
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Optional database-backed creation-retry key, retained for 24 hours.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+        pattern: '^[A-Za-z0-9._~-]+$'
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: Strong ETag containing the last observed numeric version, for example `"0"`.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+    UrlId:
+      name: id
+      in: path
+      required: true
+      description: Public UUID; never the database primary key.
+      schema:
+        type: string
+        format: uuid
+    ShortCode:
+      name: shortCode
+      in: path
+      required: true
+      description: Exact case-sensitive generated code or normalized lowercase custom alias.
+      schema:
+        type: string
+        minLength: 3
+        maxLength: 48
+        pattern: '^[A-Za-z0-9][A-Za-z0-9-]{1,46}[A-Za-z0-9]$'
+    From:
+      name: from
+      in: query
+      required: false
+      description: Inclusive UTC range start. Must be supplied together with `to`.
+      schema:
+        type: string
+        format: date-time
+    To:
+      name: to
+      in: query
+      required: false
+      description: Exclusive UTC range end. Must be supplied together with `from`.
+      schema:
+        type: string
+        format: date-time
+  headers:
+    CorrelationId:
+      description: Effective server correlation ID.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 64
+    ETag:
+      description: Strong ETag containing the resource version.
+      schema:
+        type: string
+        pattern: '^"[0-9]+"$'
+    NoStore:
+      description: Prevent caching of mutable redirects and errors.
+      schema:
+        type: string
+        const: no-store
+    RetryAfter:
+      description: Seconds until a request may be retried.
+      schema:
+        type: integer
+        minimum: 1
+    IdempotencyReplayed:
+      description: True when an unexpired same-key/same-request creation was replayed.
+      schema:
+        type: boolean
+  responses:
+    UrlCreated:
+      description: Link created, or idempotency replay returned the same identity.
+      headers:
+        Location:
+          description: Management resource location.
+          schema:
+            type: string
+            format: uri-reference
+        ETag:
+          $ref: '#/components/headers/ETag'
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Idempotency-Replayed:
+          $ref: '#/components/headers/IdempotencyReplayed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UrlResponse'
+    UrlOk:
+      description: Current link representation.
+      headers:
+        ETag:
+          $ref: '#/components/headers/ETag'
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UrlResponse'
+    RedirectFound:
+      description: Eligible temporary redirect. Analytics failure does not change this response.
+      headers:
+        Location:
+          description: Exact stored HTTP(S) destination, including stored query and fragment.
+          schema:
+            type: string
+            format: uri
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+    BadRequest:
+      description: Validation, URL, pagination, sort, or date-range error.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Resource missing or public disabled link masked as missing.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Alias, idempotency, lifecycle, or optimistic-lock conflict.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Gone:
+      description: Link is expired or soft-deleted.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionRequired:
+      description: Required If-Match header is missing.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    RateLimited:
+      description: Configured request rate exceeded.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    InternalError:
+      description: Unexpected error without internal detail disclosure.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ServiceUnavailable:
+      description: Required dependency unavailable.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/CorrelationId'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    UrlCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [originalUrl]
+      properties:
+        originalUrl:
+          type: string
+          format: uri
+          minLength: 10
+          maxLength: 2048
+          pattern: '^https?://.+$'
+        customAlias:
+          type: string
+          minLength: 3
+          maxLength: 48
+          pattern: '^[A-Za-z0-9][A-Za-z0-9-]{1,46}[A-Za-z0-9]$'
+          description: Accepted case-insensitively and normalized to lowercase.
+        expiresAt:
+          type: string
+          format: date-time
+          description: Must be strictly in the future when processed.
+    UrlExpirationPatch:
+      type: object
+      additionalProperties: false
+      required: [expiresAt]
+      properties:
+        expiresAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          description: Future UTC instant, or null to remove expiration.
+    UrlResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - shortCode
+        - shortUrl
+        - originalUrl
+        - codeType
+        - status
+        - expired
+        - createdAt
+        - updatedAt
+        - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        shortCode:
+          type: string
+          minLength: 3
+          maxLength: 48
+        shortUrl:
+          type: string
+          format: uri
+        originalUrl:
+          type: string
+          format: uri
+          maxLength: 2048
+        codeType:
+          $ref: '#/components/schemas/CodeType'
+        status:
+          $ref: '#/components/schemas/LifecycleStatus'
+        expired:
+          type: boolean
+        expiresAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        version:
+          type: integer
+          format: int64
+          minimum: 0
+    UrlPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, totalElements, totalPages, sort, direction]
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/UrlResponse'
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        totalElements:
+          type: integer
+          format: int64
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+        sort:
+          $ref: '#/components/schemas/UrlSortField'
+        direction:
+          $ref: '#/components/schemas/SortDirection'
+    LifecycleStatus:
+      type: string
+      enum: [ACTIVE, DISABLED, DELETED]
+    CodeType:
+      type: string
+      enum: [GENERATED, CUSTOM_ALIAS]
+    UrlSortField:
+      type: string
+      enum: [createdAt, updatedAt, expiresAt, shortCode, status]
+      default: createdAt
+    SortDirection:
+      type: string
+      enum: [asc, desc]
+      default: desc
+    AnalyticsConsistency:
+      type: string
+      const: NEAR_REAL_TIME
+    AnalyticsCompleteness:
+      type: string
+      const: BEST_EFFORT
+    AnalyticsRange:
+      type: object
+      required: [from, to, consistency, completeness]
+      properties:
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+        consistency:
+          $ref: '#/components/schemas/AnalyticsConsistency'
+        completeness:
+          $ref: '#/components/schemas/AnalyticsCompleteness'
+    AnalyticsSummary:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsRange'
+        - type: object
+          required: [urlId, totalClicks]
+          properties:
+            urlId:
+              type: string
+              format: uuid
+            totalClicks:
+              type: integer
+              format: int64
+              minimum: 0
+            lastEventAt:
+              oneOf:
+                - type: string
+                  format: date-time
+                - type: 'null'
+    TimeBucket:
+      type: string
+      enum: [HOUR, DAY]
+      default: DAY
+    AnalyticsPoint:
+      type: object
+      additionalProperties: false
+      required: [start, end, clicks]
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        clicks:
+          type: integer
+          format: int64
+          minimum: 0
+    AnalyticsTimeseries:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsRange'
+        - type: object
+          required: [urlId, bucket, points]
+          properties:
+            urlId:
+              type: string
+              format: uuid
+            bucket:
+              $ref: '#/components/schemas/TimeBucket'
+            points:
+              type: array
+              maxItems: 2160
+              items:
+                $ref: '#/components/schemas/AnalyticsPoint'
+    NamedCount:
+      type: object
+      additionalProperties: false
+      required: [name, clicks]
+      properties:
+        name:
+          type: string
+          maxLength: 253
+        clicks:
+          type: integer
+          format: int64
+          minimum: 0
+    AnalyticsReferrers:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsRange'
+        - type: object
+          required: [urlId, referrers]
+          properties:
+            urlId:
+              type: string
+              format: uuid
+            referrers:
+              type: array
+              maxItems: 100
+              items:
+                $ref: '#/components/schemas/NamedCount'
+    AnalyticsDevices:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: '#/components/schemas/AnalyticsRange'
+        - type: object
+          required: [urlId, deviceTypes, browsers, operatingSystems]
+          properties:
+            urlId:
+              type: string
+              format: uuid
+            deviceTypes:
+              type: array
+              maxItems: 20
+              items:
+                $ref: '#/components/schemas/NamedCount'
+            browsers:
+              type: array
+              maxItems: 100
+              items:
+                $ref: '#/components/schemas/NamedCount'
+            operatingSystems:
+              type: array
+              maxItems: 100
+              items:
+                $ref: '#/components/schemas/NamedCount'
+    ErrorCode:
+      type: string
+      enum:
+        - VALIDATION_ERROR
+        - INVALID_URL
+        - URL_NOT_FOUND
+        - URL_DISABLED
+        - URL_EXPIRED
+        - URL_DELETED
+        - ALIAS_CONFLICT
+        - IDEMPOTENCY_CONFLICT
+        - OPTIMISTIC_LOCK_CONFLICT
+        - PRECONDITION_REQUIRED
+        - RATE_LIMIT_EXCEEDED
+        - INVALID_DATE_RANGE
+        - INTERNAL_ERROR
+        - SERVICE_UNAVAILABLE
+    FieldError:
+      type: object
+      additionalProperties: false
+      required: [field, message]
+      properties:
+        field:
+          type: string
+          maxLength: 100
+        message:
+          type: string
+          maxLength: 500
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [timestamp, status, code, message, path, correlationId, fieldErrors]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          maxLength: 1000
+        path:
+          type: string
+          maxLength: 500
+        correlationId:
+          type: string
+          minLength: 8
+          maxLength: 64
+        fieldErrors:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/FieldError'

@@ -1,0 +1,348 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Project Review</p>
+
+    <h1>Project Review</h1>
+
+    <p>
+      A concise technical overview of the application,
+      architecture, project structure, API design, and
+      implementation decisions.
+    </p>
+  </div>
+
+  <div class="page-header__actions">
+    <a
+      class="button button--secondary"
+      href="/v3/api-docs"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      OpenAPI
+    </a>
+
+    <a
+      class="button"
+      href="/swagger-ui/index.html"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i
+  class="bi bi-box-arrow-up-right"
+  aria-hidden="true"
+></i>
+
+      Swagger UI
+    </a>
+  </div>
+</header>
+
+<section class="review-section">
+  <header class="section-header">
+    <div>
+      <h2>URL Shortener</h2>
+
+      <p>
+        A focused full-stack application for creating,
+        managing, redirecting, and analyzing shortened URLs.
+      </p>
+    </div>
+  </header>
+
+  <div class="feature-grid">
+    <article class="feature-card">
+      <span class="feature-icon">
+        <i
+  class="bi bi-server"
+  aria-hidden="true"
+></i>
+      </span>
+
+      <div>
+        <h3>URL Lifecycle</h3>
+
+        <p>
+          Create, enable, disable, expire, and soft-delete
+          shortened URLs.
+        </p>
+      </div>
+    </article>
+
+    <article class="feature-card">
+      <span class="feature-icon">
+        <i
+  class="bi bi-server"
+  aria-hidden="true"
+></i>
+      </span>
+
+      <div>
+        <h3>Reliable Backend</h3>
+
+        <p>
+          Spring Boot APIs with idempotency, optimistic
+          locking, rate limiting, and consistent errors.
+        </p>
+      </div>
+    </article>
+
+    <article class="feature-card">
+      <span class="feature-icon">
+        <i
+  class="bi bi-layers"
+  aria-hidden="true"
+></i>
+      </span>
+
+      <div>
+        <h3>Analytics</h3>
+
+        <p>
+          Redirect counts, traffic trends, referrers,
+          devices, browsers, and operating systems.
+        </p>
+      </div>
+    </article>
+
+    <article class="feature-card">
+      <span class="feature-icon">
+        <i
+  class="bi bi-boxes"
+  aria-hidden="true"
+></i>
+      </span>
+
+      <div>
+        <h3>Simple Architecture</h3>
+
+        <p>
+          A modular monolith with clear frontend and backend
+          boundaries without unnecessary infrastructure.
+        </p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="review-section">
+  <header class="section-header">
+    <div>
+      <h2>Request Flow</h2>
+
+      <p>
+        The application intentionally follows a straightforward
+        request path that is easy to understand and maintain.
+      </p>
+    </div>
+  </header>
+
+  <div
+    class="architecture-flow"
+    aria-label="Application request flow"
+  >
+    <article class="architecture-node">
+      <span class="node-number">
+        01
+      </span>
+
+      <i
+  class="bi bi-code-slash"
+  aria-hidden="true"
+></i>
+
+      <strong>Angular</strong>
+
+      <small>
+        Pages and components
+      </small>
+    </article>
+
+    <span
+      class="flow-line"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <article class="architecture-node">
+      <span class="node-number">
+        02
+      </span>
+
+     <i
+  class="bi bi-diagram-3"
+  aria-hidden="true"
+></i>
+
+      <strong>API Services</strong>
+
+      <small>
+        Typed HTTP communication
+      </small>
+    </article>
+
+    <span
+      class="flow-line"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <article class="architecture-node">
+      <span class="node-number">
+        03
+      </span>
+
+      <i
+  class="bi bi-server"
+  aria-hidden="true"
+></i>
+      <strong>Spring Boot</strong>
+
+      <small>
+        Business logic and APIs
+      </small>
+    </article>
+
+    <span
+      class="flow-line"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <article class="architecture-node">
+      <span class="node-number">
+        04
+      </span>
+
+      <i
+  class="bi bi-layers"
+  aria-hidden="true"
+></i>
+
+      <strong>MySQL</strong>
+
+      <small>
+        Persistent storage
+      </small>
+    </article>
+  </div>
+
+  <div class="architecture-note">
+    <strong>
+      Why a modular monolith?
+    </strong>
+
+    <p>
+      The project does not require distributed services,
+      messaging, or multiple deployment units. Keeping the
+      architecture simple reduces operational complexity while
+      still preserving clear module boundaries.
+    </p>
+  </div>
+</section>
+
+<section class="review-section">
+  <header class="section-header">
+    <div>
+      <h2>Technology Stack</h2>
+    </div>
+  </header>
+
+  <div class="technology-grid">
+    <article>
+      <strong>Frontend</strong>
+
+      <span>
+        Angular 19
+      </span>
+
+      <span>
+        TypeScript
+      </span>
+
+      <span>
+        Signals + RxJS
+      </span>
+    </article>
+
+    <article>
+      <strong>Backend</strong>
+
+      <span>
+        Java
+      </span>
+
+      <span>
+        Spring Boot
+      </span>
+
+      <span>
+        Spring Data JPA
+      </span>
+
+      <span>
+        JdbcTemplate
+      </span>
+    </article>
+
+    <article>
+      <strong>Database</strong>
+
+      <span>
+        MySQL
+      </span>
+
+      <span>
+        Flyway
+      </span>
+    </article>
+
+    <article>
+      <strong>Quality</strong>
+
+      <span>
+        Jasmine / Karma
+      </span>
+
+      <span>
+        Playwright
+      </span>
+
+      <span>
+        OpenAPI
+      </span>
+    </article>
+  </div>
+</section>
+
+<section class="review-section">
+  <header class="section-header">
+    <div>
+      <h2>Project Structure</h2>
+
+      <p>
+        Browse the frontend and backend organization without
+        opening the repository manually.
+      </p>
+    </div>
+  </header>
+
+  <app-project-structure />
+</section>
+
+<section class="review-section">
+  <header class="section-header">
+    <div>
+      <h2>README</h2>
+
+      <p>
+        The same project documentation available in the
+        repository, rendered directly inside the application.
+      </p>
+    </div>
+  </header>
+
+  <app-readme-viewer />
+</section>

@@ -1,0 +1,379 @@
+<h1>Analytics</h1>
+
+<p>
+  Review redirect activity, traffic sources,
+  browsers, devices, and operating systems.
+</p>
+
+<a
+  class="button button--secondary"
+  routerLink="/urls"
+>
+  <i
+    class="bi bi-arrow-left"
+    aria-hidden="true"
+  ></i>
+
+  URL Management
+</a>
+
+@if (!selectedId()) {
+  @if (selectorError(); as currentError) {
+    <app-error-state
+      [error]="currentError"
+      title="URL selector unavailable"
+      (retry)="loadUrlOptions()"
+    />
+  } @else if (selectorLoading()) {
+    <app-loading-indicator
+      label="Loading URLs..."
+    />
+  } @else {
+    <section>
+      <i
+        class="bi bi-bar-chart"
+        aria-hidden="true"
+      ></i>
+
+      <div class="selection-heading">
+        <h2>Select a URL</h2>
+
+        <p>
+          Choose one of the 20 most recently created
+          URLs to review its analytics.
+        </p>
+      </div>
+
+      @if (urlOptions().length === 0) {
+        <app-empty-state
+          title="No URLs available"
+          message="Create a short URL before viewing analytics."
+        >
+          <a
+            class="button"
+            routerLink="/urls/new"
+          >
+            Create URL
+          </a>
+        </app-empty-state>
+      } @else {
+        <form
+          class="selection-form"
+          [formGroup]="selectionForm"
+          (ngSubmit)="openSelection()"
+        >
+          <div class="field">
+            <label for="analytics-url">
+              Short URL
+            </label>
+
+            <div class="selection-input">
+              <i
+                class="bi bi-search"
+                aria-hidden="true"
+              ></i>
+
+              <select
+                id="analytics-url"
+                formControlName="urlId"
+                required
+              >
+                <option value="">
+                  Select a URL
+                </option>
+
+                @for (
+                  url of urlOptions();
+                  track url.id
+                ) {
+                  <option [value]="url.id">
+                    {{ url.shortCode }}
+                    · {{ url.status }}
+                    {{
+                      url.expired
+                        ? ' · expired'
+                        : ''
+                    }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <button
+            class="button"
+            type="submit"
+            [disabled]="selectionForm.invalid"
+          >
+            View analytics
+          </button>
+        </form>
+      }
+    </section>
+  }
+} @else {
+
+  @if (selectedUrl(); as url) {
+    <section>
+      <div>
+        Selected URL
+
+        <h2>
+          {{ url.shortCode }}
+        </h2>
+
+        <p class="selected-url-value">
+          {{ url.shortUrl }}
+        </p>
+      </div>
+
+      <app-status-badge
+        [status]="url.status"
+        [expired]="url.expired"
+      />
+
+      <div class="selected-url-actions">
+        <a
+          [routerLink]="['/urls', url.id]"
+        >
+          View details
+        </a>
+
+        <button
+          type="button"
+          (click)="chooseAnother()"
+        >
+          Choose another
+        </button>
+      </div>
+    </section>
+  }
+
+  <header>
+    <div>
+      <h2>Date Range</h2>
+
+      <p>
+        Analytics are queried using UTC timestamps.
+      </p>
+    </div>
+  </header>
+
+  <form
+    [formGroup]="rangeForm"
+    (ngSubmit)="loadAnalytics()"
+  >
+    <div class="range-grid">
+      <div class="field">
+        <label for="analytics-from">
+          From
+        </label>
+
+        <input
+          id="analytics-from"
+          type="datetime-local"
+          formControlName="from"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="analytics-to">
+          To
+        </label>
+
+        <input
+          id="analytics-to"
+          type="datetime-local"
+          formControlName="to"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="analytics-bucket">
+          Bucket
+        </label>
+
+        <select
+          id="analytics-bucket"
+          formControlName="bucket"
+        >
+          <option value="DAY">
+            Daily
+          </option>
+
+          <option value="HOUR">
+            Hourly
+          </option>
+        </select>
+      </div>
+
+      <button
+        class="button range-submit"
+        type="submit"
+        [disabled]="analyticsLoading()"
+      >
+        <i
+          class="bi bi-arrow-clockwise"
+          aria-hidden="true"
+        ></i>
+
+        {{
+          analyticsLoading()
+            ? 'Loading...'
+            : 'Apply range'
+        }}
+      </button>
+    </div>
+
+    @if (rangeError(); as message) {
+      <p
+        class="field-error range-error"
+        role="alert"
+      >
+        {{ message }}
+      </p>
+    }
+
+    <p class="range-hint">
+      Maximum range is 90 days for daily buckets
+      and 7 days for hourly buckets.
+    </p>
+  </form>
+
+  @if (analyticsError(); as currentError) {
+    <app-error-state
+      [error]="currentError"
+      title="Analytics unavailable"
+      (retry)="loadAnalytics()"
+    />
+  } @else if (analyticsLoading()) {
+    <app-loading-indicator
+      label="Loading analytics..."
+    />
+  } @else {
+    @if (analytics(); as data) {
+      <section class="analytics-notice">
+        <strong>Best-effort analytics</strong>
+
+        <span>
+          Consistency:
+          {{ data.summary.consistency }}
+          · Completeness:
+          {{ data.summary.completeness }}
+        </span>
+      </section>
+
+      <app-analytics-summary
+        [summary]="data.summary"
+      />
+
+      @if (data.summary.totalClicks === 0) {
+        <app-empty-state
+          title="No analytics in this range"
+          message="No redirect events were recorded for this URL during the selected date range."
+        />
+      } @else {
+        <section class="timeseries-card">
+          <header class="section-heading">
+            <div>
+              <h2>Traffic Over Time</h2>
+
+              <p>
+                Redirect events grouped by
+                {{
+                  data.timeseries.bucket === 'HOUR'
+                    ? 'hour'
+                    : 'day'
+                }}.
+              </p>
+            </div>
+          </header>
+
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">
+                    Period Start
+                  </th>
+
+                  <th scope="col">
+                    Period End
+                  </th>
+
+                  <th
+                    scope="col"
+                    class="click-column"
+                  >
+                    Events
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (
+                  point of data.timeseries.points;
+                  track point.start
+                ) {
+                  <tr>
+                    <td>
+                      {{
+                        point.start
+                          | date:
+                            'MMM d, y, h:mm a':
+                            'UTC'
+                      }}
+                    </td>
+
+                    <td>
+                      {{
+                        point.end
+                          | date:
+                            'MMM d, y, h:mm a':
+                            'UTC'
+                      }}
+                    </td>
+
+                    <td class="click-column">
+                      <strong>
+                        {{ point.clicks }}
+                      </strong>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="analytics-grid">
+          <app-analytics-count-table
+            title="Referrer Hosts"
+            description="Top traffic sources"
+            [rows]="data.referrers.referrers"
+          />
+
+          <app-analytics-count-table
+            title="Device Types"
+            description="Traffic by device category"
+            [rows]="data.devices.deviceTypes"
+          />
+
+          <app-analytics-count-table
+            title="Browsers"
+            description="Traffic by browser family"
+            [rows]="data.devices.browsers"
+          />
+
+          <app-analytics-count-table
+            title="Operating Systems"
+            description="Traffic by operating system"
+            [rows]="data.devices.operatingSystems"
+          />
+        </div>
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+<div class="readme-header">
+  <div>
+    <h3>README.md</h3>
+
+    <p>
+      Project documentation rendered from the repository README.
+    </p>
+  </div>
+
+  <a
+    class="raw-link"
+    href="/README.md"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    View raw
+
+    <i
+      class="bi bi-box-arrow-up-right"
+      aria-hidden="true"
+    ></i>
+  </a>
+</div>
+
+@if (loading()) {
+  <div class="readme-state">
+    Loading README...
+  </div>
+} @else if (loadFailed()) {
+  <div class="readme-error">
+    <div>
+      <strong>
+        README unavailable
+      </strong>
+
+      <p>
+        The project README could not be loaded.
+      </p>
+    </div>
+
+    <button
+      class="button button--secondary button--small"
+      type="button"
+      (click)="loadReadme()"
+    >
+      <i
+        class="bi bi-arrow-clockwise"
+        aria-hidden="true"
+      ></i>
+
+      Retry
+    </button>
+  </div>
+} @else {
+  <article
+    class="markdown-content"
+    [innerHTML]="renderedReadme()"
+  ></article>
+}
