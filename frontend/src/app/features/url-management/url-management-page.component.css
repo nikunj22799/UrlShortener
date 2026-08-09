@@ -36,9 +36,6 @@
   font-size: 0.82rem;
 }
 
-.mutation-error {
-  margin-top: var(--space-4);
-}
 
 @media (max-width: 48rem) {
   .page-header .button {

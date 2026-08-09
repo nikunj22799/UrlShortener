@@ -44,6 +44,25 @@ describe('AnalyticsPageComponent', () => {
     expect(text(harness)).toContain('DESKTOP');
   });
 
+  it('does not load selector options when a URL is already selected', async () => {
+    configureAnalytics(3);
+    await navigateToAnalytics();
+
+    expect(urlApi.list).not.toHaveBeenCalled();
+  });
+
+  it('reuses the selected URL when only the analytics range changes', async () => {
+    configureAnalytics(3);
+    const harness = await navigateToAnalytics();
+
+    expect(urlApi.get).toHaveBeenCalledTimes(1);
+
+    clickButton(harness, 'Apply range');
+
+    expect(urlApi.get).toHaveBeenCalledTimes(1);
+    expect(analyticsApi.summary).toHaveBeenCalledTimes(2);
+  });
+
   it('includes the current partial minute in the default analytics range', async () => {
     configureAnalytics(3);
     const openedAt = Date.now();

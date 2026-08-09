@@ -8,10 +8,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl,
   NonNullableFormBuilder,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -27,6 +25,7 @@ import {
 } from '../../core/errors/frontend-api-error';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { futureDateValidator } from '../../core/utils/date-time';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 
@@ -244,21 +243,6 @@ export class CreateUrlPageComponent {
 
     return this.idempotencyKey;
   }
-}
-
-function futureDateValidator(
-  control: AbstractControl,
-): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
-
-  const timestamp = new Date(control.value).getTime();
-
-  return Number.isFinite(timestamp) &&
-    timestamp > Date.now()
-    ? null
-    : { futureDate: true };
 }
 
 function createFieldErrorMap(

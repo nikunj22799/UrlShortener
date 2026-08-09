@@ -1,16 +1,24 @@
-<a
-  class="button button--secondary"
-  routerLink="/urls"
->
-  View URLs
+<header class="page-header">
+  <div>
+    <p class="eyebrow">URL Management</p>
+    <h1>Create Short URL</h1>
+    <p>Create a short link with an optional alias and expiration.</p>
+  </div>
 
-  <i
-    class="bi bi-arrow-right"
-    aria-hidden="true"
-  ></i>
-</a>
+  <a
+    class="button button--secondary"
+    routerLink="/urls"
+  >
+    View URLs
+    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+  </a>
+</header>
 
 @if (createdUrl(); as url) {
+  <section class="creation-result">
+    <span class="success-icon" aria-hidden="true">
+      <i class="bi bi-check-lg"></i>
+    </span>
   <div class="success-heading">
     <div>
       <p class="eyebrow">
@@ -113,7 +121,7 @@
     </div>
   </dl>
 
-  <div class="result-actions">
+    <div class="result-actions">
     <a
       class="button"
       [href]="url.shortUrl"
@@ -147,12 +155,18 @@
 
       Create another
     </button>
-  </div>
+    </div>
+  </section>
 } @else {
-  <section>
-    <header>
-      <div>
-        <h2>Link details</h2>
+  <div class="create-layout">
+    <section class="form-panel">
+      <header class="panel-header">
+        <span class="panel-icon" aria-hidden="true">
+          <i class="bi bi-link-45deg"></i>
+        </span>
+
+        <div>
+          <h2>Link details</h2>
 
         <p>
           Enter the destination and optionally customize
@@ -381,5 +395,6 @@
         idempotency key until the request changes.
       </p>
     </div>
-  </aside>
+    </aside>
+  </div>
 }

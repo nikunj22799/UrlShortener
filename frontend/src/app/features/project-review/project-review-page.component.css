@@ -15,14 +15,13 @@
 
 /* Sections */
 
-.review-content {
-  display: grid;
-  gap: 4rem;
-}
-
 .review-section {
   min-width: 0;
   scroll-margin-top: 6rem;
+}
+
+.review-section + .review-section {
+  margin-top: 2rem;
 }
 
 .section-header {

@@ -48,7 +48,7 @@ function parseProblem(value: unknown): ApiProblem | null {
     typeof code !== 'string' ||
     !isApiErrorCode(code) ||
     typeof message !== 'string' ||
-    typeof correlationId !== 'string' ||
+    (correlationId !== null && typeof correlationId !== 'string') ||
     typeof timestamp !== 'string' ||
     typeof status !== 'number' ||
     typeof path !== 'string' ||

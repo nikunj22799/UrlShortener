@@ -17,7 +17,7 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, of } from 'rxjs';
 
 import {
   AnalyticsRangeQuery,
@@ -34,6 +34,7 @@ import {
   FrontendApiError,
   toFrontendApiError,
 } from '../../core/errors/frontend-api-error';
+import { toLocalDateTimeInput } from '../../core/utils/date-time';
 import { isUuid } from '../../core/utils/uuid';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
@@ -112,32 +113,29 @@ export class AnalyticsPageComponent {
     signal<AnalyticsData | null>(null);
 
   constructor() {
-    this.loadUrlOptions();
+    this.route.paramMap
+      .pipe(
+        map((parameters) => parameters.get('id')),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((id) => {
+        this.selectedId.set(id);
+        this.selectedUrl.set(null);
+        this.analytics.set(null);
+        this.analyticsError.set(null);
 
-    const id = this.route.snapshot.paramMap.get('id');
+        if (id === null) {
+          this.loadUrlOptions();
+          return;
+        }
 
-    if (id === null) {
-      return;
-    }
+        if (!isUuid(id)) {
+          this.analyticsError.set(invalidUrlIdError());
+          return;
+        }
 
-    this.selectedId.set(id);
-
-    if (!isUuid(id)) {
-      this.analyticsError.set(
-        new FrontendApiError(
-          400,
-          'VALIDATION_ERROR',
-          'The URL identifier is malformed.',
-          null,
-          [],
-          null,
-        ),
-      );
-
-      return;
-    }
-
-    this.loadAnalytics();
+        this.loadAnalytics();
+      });
   }
 
   protected loadUrlOptions(): void {
@@ -236,8 +234,14 @@ export class AnalyticsPageComponent {
     this.analyticsLoading.set(true);
     this.analyticsError.set(null);
 
+    const currentUrl = this.selectedUrl();
+    const urlRequest =
+      currentUrl?.id === id
+        ? of(currentUrl)
+        : this.urlApi.get(id);
+
     forkJoin({
-      url: this.urlApi.get(id),
+      url: urlRequest,
       summary:
         this.analyticsApi.summary(
           id,
@@ -345,7 +349,7 @@ function validateRange(
 }
 
 function defaultFrom(): string {
-  return toLocalDateTime(
+  return toLocalDateTimeInput(
     new Date(
       Date.now() -
         7 * 86_400_000,
@@ -354,24 +358,20 @@ function defaultFrom(): string {
 }
 
 function defaultTo(): string {
-  return toLocalDateTime(
+  return toLocalDateTimeInput(
     new Date(
       Date.now() + 60_000,
     ),
   );
 }
 
-function toLocalDateTime(
-  date: Date,
-): string {
-  const offset =
-    date.getTimezoneOffset() *
-    60_000;
-
-  return new Date(
-    date.getTime() - offset,
-  )
-    .toISOString()
-    .slice(0, 16);
+function invalidUrlIdError(): FrontendApiError {
+  return new FrontendApiError(
+    400,
+    'VALIDATION_ERROR',
+    'The URL identifier is malformed.',
+    null,
+    [],
+    null,
+  );
 }
-

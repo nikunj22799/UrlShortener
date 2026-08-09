@@ -46,6 +46,33 @@ describe('apiErrorInterceptor', () => {
     }
   });
 
+  it('preserves a valid backend problem when correlation ID is null', () => {
+    let received: unknown;
+    http.get('/api/test').subscribe({ error: (error: unknown) => (received = error) });
+
+    controller.expectOne('/api/test').flush(
+      {
+        timestamp: '2026-08-07T00:00:00Z',
+        status: 404,
+        code: 'URL_NOT_FOUND',
+        message: 'URL was not found.',
+        path: '/api/test',
+        correlationId: null,
+        fieldErrors: [],
+      },
+      { status: 404, statusText: 'Not Found' },
+    );
+
+    if (!isFrontendApiError(received)) {
+      fail('Expected a FrontendApiError');
+      return;
+    }
+
+    expect(received.code).toBe('URL_NOT_FOUND');
+    expect(received.message).toBe('URL was not found.');
+    expect(received.correlationId).toBeNull();
+  });
+
   it('preserves rate-limit retry timing', () => {
     let received: unknown;
     http.get('/api/test').subscribe({ error: (error: unknown) => (received = error) });

@@ -33,7 +33,7 @@ export interface ApiProblem {
   readonly code: ApiErrorCode;
   readonly message: string;
   readonly path: string;
-  readonly correlationId: string;
+  readonly correlationId: string | null;
   readonly fieldErrors: readonly FieldError[];
 }
 

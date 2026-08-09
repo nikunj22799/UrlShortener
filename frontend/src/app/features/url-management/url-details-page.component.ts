@@ -8,10 +8,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl,
   NonNullableFormBuilder,
   ReactiveFormsModule,
-  ValidationErrors,
 } from '@angular/forms';
 import {
   ActivatedRoute,
@@ -28,6 +26,10 @@ import {
 } from '../../core/errors/frontend-api-error';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { NotificationService } from '../../core/services/notification.service';
+import {
+  futureDateValidator,
+  toLocalDateTimeInput,
+} from '../../core/utils/date-time';
 import { isUuid } from '../../core/utils/uuid';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog.component';
 import { ErrorStateComponent } from '../../shared/components/error-state.component';
@@ -215,7 +217,7 @@ export class UrlDetailsPageComponent {
     url: UrlResponse,
   ): void {
     this.expirationForm.reset({
-      expiresAt: toLocalDateTime(url.expiresAt),
+      expiresAt: toLocalDateTimeInput(url.expiresAt),
     });
   }
 
@@ -224,7 +226,7 @@ export class UrlDetailsPageComponent {
   ): boolean {
     return (
       this.expirationForm.controls.expiresAt.value !==
-      toLocalDateTime(url.expiresAt)
+      toLocalDateTimeInput(url.expiresAt)
     );
   }
 
@@ -342,41 +344,6 @@ export class UrlDetailsPageComponent {
     this.confirmation.set(null);
     this.mutationBusy.set(false);
   }
-}
-
-function futureDateValidator(
-  control: AbstractControl<string>,
-): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
-
-  const timestamp = new Date(
-    control.value,
-  ).getTime();
-
-  return Number.isFinite(timestamp) &&
-    timestamp > Date.now()
-    ? null
-    : { futureDate: true };
-}
-
-function toLocalDateTime(
-  value: string | null,
-): string {
-  if (value === null) {
-    return '';
-  }
-
-  const date = new Date(value);
-  const timezoneOffset =
-    date.getTimezoneOffset() * 60_000;
-
-  return new Date(
-    date.getTime() - timezoneOffset,
-  )
-    .toISOString()
-    .slice(0, 16);
 }
 
 
