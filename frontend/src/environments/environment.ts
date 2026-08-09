@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://url-shortener-backend-otys.onrender.com',
+  apiBaseUrl: 'https://url-shortener-backend-z5mp.onrender.com',
 } as const;
