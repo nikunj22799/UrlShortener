@@ -3,7 +3,9 @@
   (click)="dismiss()"
 >
   <section
+    #dialog
     class="dialog"
+    tabindex="-1"
     role="dialog"
     aria-modal="true"
     [attr.aria-labelledby]="dialogId() + '-title'"
