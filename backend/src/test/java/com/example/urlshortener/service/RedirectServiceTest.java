@@ -79,6 +79,42 @@ class RedirectServiceTest {
         assertThrows(UrlNotFoundException.class, () -> redirectService.resolveRedirect("abc12345", true, null, null, "correlation-123"));
     }
 
+    @Test
+    void throwsExceptionWhenUrlIsDisabled() {
+        ShortenedUrl shortenedUrl = createUrl(null);
+        shortenedUrl.disable(Instant.parse("2026-08-07T10:00:00Z"));
+
+        when(shortenedUrlRepository.findByShortCode("abc12345"))
+                .thenReturn(Optional.of(shortenedUrl));
+
+        assertThrows(
+                UrlNotFoundException.class,
+                () -> redirectService.resolveRedirect(
+                        "abc12345",
+                        true,
+                        null,
+                        null,
+                        "correlation-123"));
+    }
+
+    @Test
+    void throwsExceptionWhenUrlIsDeleted() {
+        ShortenedUrl shortenedUrl = createUrl(null);
+        shortenedUrl.markDeleted(Instant.parse("2026-08-07T10:00:00Z"));
+
+        when(shortenedUrlRepository.findByShortCode("abc12345"))
+                .thenReturn(Optional.of(shortenedUrl));
+
+        assertThrows(
+                UrlNotFoundException.class,
+                () -> redirectService.resolveRedirect(
+                        "abc12345",
+                        true,
+                        null,
+                        null,
+                        "correlation-123"));
+    }
+    
     private ShortenedUrl createUrl(Instant expiresAt) {
         return ShortenedUrl.create(UUID.randomUUID(), "abc12345", "https://example.com/products/123", CodeType.GENERATED, expiresAt, Instant.parse("2026-08-01T12:00:00Z"));
     }

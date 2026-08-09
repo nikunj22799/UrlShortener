@@ -1,7 +1,6 @@
 package com.example.urlshortener.util;
 
 import com.example.urlshortener.exception.InvalidRequestException;
-import com.example.urlshortener.exception.InvalidRequestException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;

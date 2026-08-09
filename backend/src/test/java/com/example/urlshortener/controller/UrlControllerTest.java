@@ -1,16 +1,25 @@
 package com.example.urlshortener.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.net.URI;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.urlshortener.dto.CreateUrlRequest;
 import com.example.urlshortener.dto.LifecycleStatus;
@@ -20,15 +29,6 @@ import com.example.urlshortener.entity.CodeType;
 import com.example.urlshortener.service.UrlService;
 import com.example.urlshortener.service.UrlService.CreationResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class UrlControllerTest {
     private UrlService urlService;
@@ -48,7 +48,7 @@ class UrlControllerTest {
         UUID urlId = UUID.randomUUID();
         UrlResponse response = createResponse(urlId, "abc12345", 0L);
 
-        when(urlService.createShortUrl(any(CreateUrlRequest.class), eq("request-123"), any()))
+        when(urlService.createShortUrl(any(CreateUrlRequest.class), eq("request-123")))
                 .thenReturn(new CreationResult(response, false));
 
         String request = """
@@ -110,15 +110,22 @@ class UrlControllerTest {
 
     @Test
     void disablesUrl() throws Exception {
-        UUID urlId = UUID.randomUUID();
-        UrlResponse response = createResponse(urlId, "abc12345", 1L);
+    	UUID urlId = UUID.randomUUID();
 
-        when(urlService.disable(eq(urlId), eq(0L), any())).thenReturn(response);
+        UrlResponse response = createResponse(
+                urlId,
+                "abc12345",
+                1L,
+                LifecycleStatus.DISABLED);
+
+        when(urlService.disable(eq(urlId), eq(0L)))
+                .thenReturn(response);
 
         mockMvc.perform(post("/api/v1/urls/{urlId}/disable", urlId)
                         .header("If-Match", "\"0\""))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("ACTIVE"));
+                .andExpect(header().string("ETag", "\"1\""))
+                .andExpect(jsonPath("$.status").value("DISABLED"));
     }
 
     @Test
@@ -130,14 +137,43 @@ class UrlControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    private UrlResponse createResponse(UUID urlId, String shortCode, long version) {
+    @Test
+    void rejectsDisableWithoutIfMatch() throws Exception {
+        UUID urlId = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/v1/urls/{urlId}/disable", urlId))
+                .andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    void rejectsDisableWithInvalidIfMatch() throws Exception {
+        UUID urlId = UUID.randomUUID();
+
+        mockMvc.perform(post("/api/v1/urls/{urlId}/disable", urlId)
+                        .header("If-Match", "invalid"))
+                .andExpect(status().isBadRequest());
+    }
+    
+    private UrlResponse createResponse(
+            UUID urlId,
+            String shortCode,
+            long version) {
+
+        return createResponse(
+                urlId,
+                shortCode,
+                version,
+                LifecycleStatus.ACTIVE);
+    }
+    
+    private UrlResponse createResponse(UUID urlId, String shortCode, long version, LifecycleStatus status) {
         return new UrlResponse(
                 urlId,
                 shortCode,
-                URI.create("http://localhost:8080/" + shortCode),
+                URI.create("http://localhost:8080/r/" + shortCode),
                 "https://example.com/products/123",
                 CodeType.GENERATED,
-                LifecycleStatus.ACTIVE,
+                status,
                 false,
                 null,
                 Instant.parse("2026-08-01T12:00:00Z"),

@@ -108,13 +108,4 @@ public class RateLimitConfiguration implements WebMvcConfigurer, HandlerIntercep
 
     private record WindowState(long windowStart, int count) {
     }
-
-    public HandlerInterceptor interceptor() {
-    return new HandlerInterceptor() {
-        @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-            return RateLimitConfiguration.this.preHandle(request, response, handler);
-        }
-    };
-}
 }

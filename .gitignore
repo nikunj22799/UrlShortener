@@ -19,3 +19,13 @@ Thumbs.db
 .github/
 docs/
 scripts/
+
+# STS / Eclipse
+.project
+.classpath
+.factorypath
+.settings/
+.springBeans
+.sts4-cache/
+*.class
+/backend/bin

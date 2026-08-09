@@ -11,7 +11,6 @@ import com.example.urlshortener.dto.TimeBucket;
 import com.example.urlshortener.entity.ClickEvent;
 import com.example.urlshortener.entity.ShortenedUrl;
 import com.example.urlshortener.exception.InvalidRequestException;
-import com.example.urlshortener.exception.InvalidRequestException;
 import com.example.urlshortener.exception.UrlNotFoundException;
 import com.example.urlshortener.repository.AnalyticsQueryRepository;
 import com.example.urlshortener.repository.AnalyticsQueryRepository.BucketRow;
@@ -81,7 +80,10 @@ public class AnalyticsService {
                     correlationId);
             clickEventRepository.save(clickEvent);
         } catch (RuntimeException exception) {
-            LOGGER.warn("Analytics event could not be recorded");
+        	LOGGER.warn(
+                    "Analytics event could not be recorded for shortenedUrlId={}",
+                    shortenedUrlId,
+                    exception);
         }
     }
 
@@ -193,15 +195,6 @@ public class AnalyticsService {
                 CONSISTENCY,
                 COMPLETENESS);
         return response;
-    }
-
-    public int cleanupExpiredEvents() {
-        Instant expirationDate = clock.instant()
-                .minus(properties.analytics().retentionDays(), ChronoUnit.DAYS);
-        int deletedCount = clickEventRepository.deleteBeforeInBatch(
-                expirationDate,
-                properties.analytics().cleanupBatchSize());
-        return deletedCount;
     }
 
     private ShortenedUrl findUrl(UUID urlId) {

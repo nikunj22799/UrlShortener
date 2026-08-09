@@ -7,7 +7,6 @@ import com.example.urlshortener.dto.UrlExpirationPatchRequest;
 import com.example.urlshortener.dto.UrlListResponse;
 import com.example.urlshortener.dto.UrlResponse;
 import com.example.urlshortener.exception.InvalidRequestException;
-import com.example.urlshortener.exception.InvalidRequestException;
 import com.example.urlshortener.service.UrlService;
 import com.example.urlshortener.service.UrlService.CreationResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,8 +47,7 @@ public class UrlController {
             HttpServletRequest servletRequest) {
         CreationResult creationResult = urlService.createShortUrl(
                 request,
-                idempotencyKey,
-                correlationId(servletRequest));
+                idempotencyKey);
         UrlResponse urlResponse = creationResult.response();
         ResponseEntity.BodyBuilder responseBuilder =
                 ResponseEntity.created(URI.create("/api/v1/urls/" + urlResponse.id()))
@@ -89,8 +87,7 @@ public class UrlController {
         return withEntityTag(urlService.updateExpiration(
                 urlId,
                 requiredVersion(ifMatch),
-                request.getExpiresAt(),
-                correlationId(servletRequest)));
+                request.getExpiresAt()));
     }
 
     @PostMapping("/{urlId}/enable")
@@ -100,8 +97,7 @@ public class UrlController {
             HttpServletRequest servletRequest) {
         return withEntityTag(urlService.enable(
                 urlId,
-                requiredVersion(ifMatch),
-                correlationId(servletRequest)));
+                requiredVersion(ifMatch)));
     }
 
     @PostMapping("/{urlId}/disable")
@@ -111,8 +107,7 @@ public class UrlController {
             HttpServletRequest servletRequest) {
         return withEntityTag(urlService.disable(
                 urlId,
-                requiredVersion(ifMatch),
-                correlationId(servletRequest)));
+                requiredVersion(ifMatch)));
     }
 
     @DeleteMapping("/{urlId}")
@@ -122,8 +117,7 @@ public class UrlController {
             HttpServletRequest servletRequest) {
         urlService.delete(
                 urlId,
-                optionalVersion(ifMatch),
-                correlationId(servletRequest));
+                optionalVersion(ifMatch));
         return ResponseEntity.noContent().build();
     }
 

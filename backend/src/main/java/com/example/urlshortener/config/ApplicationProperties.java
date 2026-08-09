@@ -14,7 +14,6 @@ public record ApplicationProperties(
         @NotNull URI baseUrl,
         @Valid @NotNull ShortCode shortCode,
         @Valid @NotNull Pagination pagination,
-        @Valid @NotNull Cache cache,
         @Valid @NotNull Analytics analytics,
         @Valid @NotNull Idempotency idempotency,
         @Valid @NotNull RateLimit rateLimit) {
@@ -54,19 +53,12 @@ public record ApplicationProperties(
         }
     }
 
-    public record Cache(
-            boolean enabled,
-            @Min(1) @Max(100_000) int maximumEntries,
-            @Min(1) @Max(3_600) int ttlSeconds) {
-    }
-
     public record Analytics(
             @Min(1) @Max(90) int defaultRangeDays,
             @Min(1) @Max(90) int maximumRangeDays,
             @Min(1) @Max(7) int maximumHourlyRangeDays,
             @Min(1) @Max(100) int defaultReferrerLimit,
             @Min(1) @Max(100) int maximumReferrerLimit,
-            @Min(1) @Max(365) int retentionDays,
             @Min(1) @Max(100_000) int cleanupBatchSize) {
         public Analytics {
             if (defaultRangeDays > maximumRangeDays) {

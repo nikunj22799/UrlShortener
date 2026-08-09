@@ -3,15 +3,12 @@ package com.example.urlshortener.service;
 import com.example.urlshortener.entity.ShortenedUrl;
 import com.example.urlshortener.entity.UrlStatus;
 import com.example.urlshortener.exception.UrlNotFoundException;
-import com.example.urlshortener.exception.UrlNotFoundException;
-import com.example.urlshortener.exception.UrlNotFoundException;
 import com.example.urlshortener.repository.ShortenedUrlRepository;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RedirectService {
@@ -30,7 +27,6 @@ public class RedirectService {
         this.clock = clock;
     }
 
-    @Transactional(readOnly = true)
     public URI resolveRedirect(
             String shortCode,
             boolean recordAnalytics,

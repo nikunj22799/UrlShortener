@@ -36,17 +36,16 @@ app:
   pagination:
     default-size: ${PAGINATION_DEFAULT_SIZE:20}
     maximum-size: ${PAGINATION_MAX_SIZE:100}
-  cache:
-    enabled: ${CACHE_ENABLED:false}
-    maximum-entries: ${CACHE_MAXIMUM_ENTRIES:10000}
-    ttl-seconds: ${CACHE_TTL_SECONDS:30}
+#  cache:
+#    enabled: ${CACHE_ENABLED:false}
+#    maximum-entries: ${CACHE_MAXIMUM_ENTRIES:10000}
+#    ttl-seconds: ${CACHE_TTL_SECONDS:30}
   analytics:
     default-range-days: ${ANALYTICS_DEFAULT_RANGE_DAYS:7}
     maximum-range-days: ${ANALYTICS_MAXIMUM_RANGE_DAYS:90}
     maximum-hourly-range-days: ${ANALYTICS_MAXIMUM_HOURLY_RANGE_DAYS:7}
     default-referrer-limit: ${ANALYTICS_DEFAULT_REFERRER_LIMIT:10}
     maximum-referrer-limit: ${ANALYTICS_MAXIMUM_REFERRER_LIMIT:100}
-    retention-days: ${ANALYTICS_RETENTION_DAYS:90}
     cleanup-batch-size: ${ANALYTICS_CLEANUP_BATCH_SIZE:5000}
   idempotency:
     retention-hours: ${IDEMPOTENCY_RETENTION_HOURS:24}

@@ -24,7 +24,7 @@ class RateLimitHttpTest {
                 Clock.systemUTC(),
                 new SimpleMeterRegistry());
 
-        interceptor = configuration.interceptor();
+        interceptor = configuration;
     }
 
     @Test

@@ -1,18 +1,27 @@
 package com.example.urlshortener.exception;
 
-import com.example.urlshortener.config.CorrelationIdFilter;
-import com.example.urlshortener.dto.ApiError;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.urlshortener.config.CorrelationIdFilter;
+import com.example.urlshortener.dto.ApiError;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	
+	private static final Logger LOGGER =
+	        LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<ApiError> handleInvalidRequest(
             InvalidRequestException exception,
@@ -98,6 +107,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUnexpected(
             Exception exception,
             HttpServletRequest request) {
+    	LOGGER.error(
+    	        "Unexpected error while processing request",
+    	        exception);
         ApiError error = new ApiError(
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

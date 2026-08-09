@@ -1,5 +1,6 @@
 package com.example.urlshortener.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -116,6 +117,19 @@ class AnalyticsServiceTest {
         verify(clickEventRepository).save(any());
     }
 
+    @Test
+    void doesNotThrowWhenClickEventCannotBeRecorded() {
+        when(clickEventRepository.save(any()))
+                .thenThrow(new RuntimeException("Database failure"));
+
+        assertDoesNotThrow(() ->
+                analyticsService.recordBestEffort(
+                        10L,
+                        "https://google.com",
+                        "Mozilla/5.0 Chrome/120",
+                        "correlation-123"));
+    }
+    
     private ShortenedUrl createUrl(UUID urlId) {
         ShortenedUrl shortenedUrl = ShortenedUrl.create(
                 urlId,

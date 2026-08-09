@@ -61,7 +61,7 @@ public class UrlService {
         this.newTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
-    public CreationResult createShortUrl(CreateUrlRequest request, String idempotencyKey, String correlationId) {
+    public CreationResult createShortUrl(CreateUrlRequest request, String idempotencyKey) {
         String originalUrl = urlValidator.validateDestination(request.originalUrl());
         String customAlias = urlValidator.normalizeAlias(request.customAlias());
         Instant now = clock.instant();
@@ -100,7 +100,7 @@ public class UrlService {
     }
 
     @Transactional
-    public UrlResponse updateExpiration(UUID urlId, long expectedVersion, Instant expiresAt, String correlationId) {
+    public UrlResponse updateExpiration(UUID urlId, long expectedVersion, Instant expiresAt) {
         ShortenedUrl shortenedUrl = findUrl(urlId);
         validateActiveUrl(shortenedUrl);
         validateVersion(shortenedUrl, expectedVersion);
@@ -112,7 +112,7 @@ public class UrlService {
     }
 
     @Transactional
-    public UrlResponse enable(UUID urlId, long expectedVersion, String correlationId) {
+    public UrlResponse enable(UUID urlId, long expectedVersion) {
         ShortenedUrl shortenedUrl = findUrl(urlId);
         validateActiveUrl(shortenedUrl);
         validateVersion(shortenedUrl, expectedVersion);
@@ -123,7 +123,7 @@ public class UrlService {
     }
 
     @Transactional
-    public UrlResponse disable(UUID urlId, long expectedVersion, String correlationId) {
+    public UrlResponse disable(UUID urlId, long expectedVersion) {
         ShortenedUrl shortenedUrl = findUrl(urlId);
         validateActiveUrl(shortenedUrl);
         validateVersion(shortenedUrl, expectedVersion);
@@ -134,7 +134,7 @@ public class UrlService {
     }
 
     @Transactional
-    public void delete(UUID urlId, Long expectedVersion, String correlationId) {
+    public void delete(UUID urlId, Long expectedVersion) {
         ShortenedUrl shortenedUrl = findUrl(urlId);
         if (shortenedUrl.isDeleted()) {
             return;
@@ -145,12 +145,6 @@ public class UrlService {
         validateVersion(shortenedUrl, expectedVersion);
         shortenedUrl.markDeleted(clock.instant());
         shortenedUrlRepository.save(shortenedUrl);
-    }
-
-    public int cleanupExpiredIdempotencyRecords() {
-        Instant now = clock.instant();
-        int batchSize = properties.idempotency().cleanupBatchSize();
-        return idempotencyRecordRepository.deleteExpiredBatch(now, batchSize);
     }
 
     private ShortenedUrl createUrl(String originalUrl, String customAlias, Instant expiresAt, Instant createdAt) {
@@ -338,7 +332,7 @@ public class UrlService {
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
-        return URI.create(baseUrl + "/" + shortCode);
+        return URI.create(baseUrl + "/r/" + shortCode);
     }
 
     public record CreationResult(UrlResponse response, boolean replayed) {}

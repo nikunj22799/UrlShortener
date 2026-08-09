@@ -17,11 +17,6 @@ public interface IdempotencyRecordRepository extends JpaRepository<IdempotencyRe
             + "join fetch record.shortenedUrl where record.keyHash = :keyHash")
     Optional<IdempotencyRecord> findByKeyHash(@Param("keyHash") byte[] keyHash);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select record from IdempotencyRecord record "
-            + "join fetch record.shortenedUrl where record.keyHash = :keyHash")
-    Optional<IdempotencyRecord> findByKeyHashForUpdate(@Param("keyHash") byte[] keyHash);
-
     @Modifying
     @Query(value = "DELETE FROM idempotency_record WHERE expires_at <= :now ORDER BY expires_at, id LIMIT :limit", nativeQuery = true)
     int deleteExpiredBatch(@Param("now") Instant now, @Param("limit") int limit);
