@@ -26,6 +26,7 @@ import com.example.urlshortener.dto.LifecycleStatus;
 import com.example.urlshortener.dto.UrlListResponse;
 import com.example.urlshortener.dto.UrlResponse;
 import com.example.urlshortener.entity.CodeType;
+import com.example.urlshortener.exception.GlobalExceptionHandler;
 import com.example.urlshortener.service.UrlService;
 import com.example.urlshortener.service.UrlService.CreationResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,10 +38,12 @@ class UrlControllerTest {
 
     @BeforeEach
     void setUp() {
-        urlService = org.mockito.Mockito.mock(UrlService.class);
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        mockMvc = MockMvcBuilders.standaloneSetup(new UrlController(urlService)).build();
+		urlService = org.mockito.Mockito.mock(UrlService.class);
+		objectMapper = new ObjectMapper();
+		objectMapper.findAndRegisterModules();
+
+		mockMvc = MockMvcBuilders.standaloneSetup(new UrlController(urlService))
+				.setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 
     @Test
