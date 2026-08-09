@@ -2,12 +2,12 @@
   display: block;
 }
 
-.results-section {
+.url-results {
   display: grid;
   gap: var(--space-4);
 }
 
-.result-heading {
+.results-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,13 +16,13 @@
   font-size: 0.84rem;
 }
 
-.result-heading > div {
+.results-header > div {
   display: flex;
   align-items: baseline;
   gap: 0.3rem;
 }
 
-.result-heading strong {
+.results-header strong {
   color: var(--color-ink);
   font-size: 1rem;
 }
@@ -45,7 +45,7 @@
     width: 100%;
   }
 
-  .result-heading {
+  .results-header {
     align-items: flex-start;
   }
 

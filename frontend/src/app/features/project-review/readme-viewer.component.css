@@ -42,11 +42,11 @@
   color: var(--color-primary);
 }
 
-.readme-heading h3 {
+.readme-header h3 {
   margin-bottom: 0.15rem;
 }
 
-.readme-heading p {
+.readme-header p {
   margin: 0;
   color: var(--color-muted);
   font-size: 0.77rem;
@@ -80,17 +80,17 @@
   text-align: center;
 }
 
-.readme-state--error {
+.readme-error {
   justify-content: space-between;
   gap: 1rem;
   text-align: left;
 }
 
-.readme-state--error strong {
+.readme-error strong {
   color: var(--color-ink);
 }
 
-.readme-state--error p {
+.readme-error p {
   margin: 0.2rem 0 0;
   color: var(--color-muted);
   font-size: 0.78rem;
@@ -303,16 +303,16 @@
     align-items: flex-start;
   }
 
-  .readme-heading p {
+  .readme-header p {
     display: none;
   }
 
-  .readme-state--error {
+  .readme-error {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .readme-state--error .button {
+  .readme-error .button {
     width: 100%;
   }
 

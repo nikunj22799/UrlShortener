@@ -2,56 +2,14 @@
   display: block;
 }
 
-.review-header {
+.page-header {
   align-items: flex-end;
 }
 
-.header-actions {
+.page-header__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem;
-}
-
-
-/* Navigation */
-
-.review-navigation {
-  position: sticky;
-  z-index: 20;
-  top: 1rem;
-  display: flex;
-  gap: 0.3rem;
-  margin-bottom: 2.5rem;
-  overflow-x: auto;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0.4rem;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(12px);
-  scrollbar-width: none;
-}
-
-.review-navigation::-webkit-scrollbar {
-  display: none;
-}
-
-.review-navigation a {
-  flex: 0 0 auto;
-  border-radius: 0.5rem;
-  padding: 0.55rem 0.85rem;
-  color: var(--color-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
-}
-
-.review-navigation a:hover {
-  background: var(--color-primary-soft);
-  color: var(--color-primary-dark);
 }
 
 
@@ -67,16 +25,16 @@
   scroll-margin-top: 6rem;
 }
 
-.section-heading {
+.section-header {
   max-width: 48rem;
   margin-bottom: 1.4rem;
 }
 
-.section-heading h2 {
+.section-header h2 {
   margin-bottom: 0.35rem;
 }
 
-.section-heading p:last-child {
+.section-header p:last-child {
   margin: 0;
   color: var(--color-muted);
 }
@@ -274,34 +232,28 @@
 }
 
 @media (max-width: 48rem) {
-  .review-header {
+  .page-header {
     align-items: stretch;
   }
 
-  .header-actions {
+  .page-header__actions {
     display: grid;
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
   }
 
-  .review-navigation {
-    position: static;
-  }
 
-  .review-content {
-    gap: 3rem;
-  }
 }
 
 @media (max-width: 34rem) {
   .feature-grid,
   .technology-grid,
   .architecture-flow,
-  .header-actions {
+  .page-header__actions {
     grid-template-columns: 1fr;
   }
 
-  .header-actions .button {
+  .page-header__actions .button {
     width: 100%;
   }
 
@@ -311,8 +263,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .feature-card,
-  .review-navigation a {
+  .feature-card {
     transition: none;
   }
 }
