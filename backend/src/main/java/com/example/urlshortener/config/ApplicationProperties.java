@@ -58,8 +58,7 @@ public record ApplicationProperties(
             @Min(1) @Max(90) int maximumRangeDays,
             @Min(1) @Max(7) int maximumHourlyRangeDays,
             @Min(1) @Max(100) int defaultReferrerLimit,
-            @Min(1) @Max(100) int maximumReferrerLimit,
-            @Min(1) @Max(100_000) int cleanupBatchSize) {
+            @Min(1) @Max(100) int maximumReferrerLimit) {
         public Analytics {
             if (defaultRangeDays > maximumRangeDays) {
                 throw new IllegalArgumentException(
@@ -73,8 +72,7 @@ public record ApplicationProperties(
     }
 
     public record Idempotency(
-            @Min(1) @Max(168) int retentionHours,
-            @Min(1) @Max(10_000) int cleanupBatchSize) {
+            @Min(1) @Max(168) int retentionHours) {
     }
 
     public record RateLimit(

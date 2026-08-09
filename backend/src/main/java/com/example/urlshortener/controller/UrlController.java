@@ -1,20 +1,10 @@
 package com.example.urlshortener.controller;
 
-import com.example.urlshortener.config.CorrelationIdFilter;
-import com.example.urlshortener.dto.CreateUrlRequest;
-import com.example.urlshortener.dto.LifecycleStatus;
-import com.example.urlshortener.dto.UrlExpirationPatchRequest;
-import com.example.urlshortener.dto.UrlListResponse;
-import com.example.urlshortener.dto.UrlResponse;
-import com.example.urlshortener.exception.InvalidRequestException;
-import com.example.urlshortener.service.UrlService;
-import com.example.urlshortener.service.UrlService.CreationResult;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +18,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.urlshortener.dto.CreateUrlRequest;
+import com.example.urlshortener.dto.LifecycleStatus;
+import com.example.urlshortener.dto.UrlExpirationPatchRequest;
+import com.example.urlshortener.dto.UrlListResponse;
+import com.example.urlshortener.dto.UrlResponse;
+import com.example.urlshortener.exception.InvalidRequestException;
+import com.example.urlshortener.service.UrlService;
+import com.example.urlshortener.service.UrlService.CreationResult;
+
+import jakarta.validation.Valid;
 
 @Validated
 @RestController
@@ -43,8 +44,7 @@ public class UrlController {
     @PostMapping
     public ResponseEntity<UrlResponse> createUrl(
             @Valid @RequestBody CreateUrlRequest request,
-            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-            HttpServletRequest servletRequest) {
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey) {
         CreationResult creationResult = urlService.createShortUrl(
                 request,
                 idempotencyKey);
@@ -79,8 +79,7 @@ public class UrlController {
     public ResponseEntity<UrlResponse> updateUrlExpiration(
             @PathVariable UUID urlId,
             @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch,
-            @RequestBody UrlExpirationPatchRequest request,
-            HttpServletRequest servletRequest) {
+            @RequestBody UrlExpirationPatchRequest request) {
         if (!request.isExpiresAtPresent()) {
             throw new InvalidRequestException("expiresAt", "is required and may be null");
         }
@@ -93,8 +92,7 @@ public class UrlController {
     @PostMapping("/{urlId}/enable")
     public ResponseEntity<UrlResponse> enableUrl(
             @PathVariable UUID urlId,
-            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch,
-            HttpServletRequest servletRequest) {
+            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch) {
         return withEntityTag(urlService.enable(
                 urlId,
                 requiredVersion(ifMatch)));
@@ -103,8 +101,7 @@ public class UrlController {
     @PostMapping("/{urlId}/disable")
     public ResponseEntity<UrlResponse> disableUrl(
             @PathVariable UUID urlId,
-            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch,
-            HttpServletRequest servletRequest) {
+            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch) {
         return withEntityTag(urlService.disable(
                 urlId,
                 requiredVersion(ifMatch)));
@@ -113,8 +110,7 @@ public class UrlController {
     @DeleteMapping("/{urlId}")
     public ResponseEntity<Void> deleteUrl(
             @PathVariable UUID urlId,
-            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch,
-            HttpServletRequest servletRequest) {
+            @RequestHeader(name = HttpHeaders.IF_MATCH, required = false) String ifMatch) {
         urlService.delete(
                 urlId,
                 optionalVersion(ifMatch));
@@ -154,8 +150,4 @@ public class UrlController {
         }
     }
 
-    private String correlationId(HttpServletRequest request) {
-        Object value = request.getAttribute(CorrelationIdFilter.ATTRIBUTE_NAME);
-        return value instanceof String correlationId ? correlationId : null;
-    }
 }
