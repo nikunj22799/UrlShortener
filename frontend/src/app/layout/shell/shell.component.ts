@@ -20,6 +20,7 @@ import { NotificationCenterComponent } from '../notification-center/notification
 })
 export class ShellComponent {
   protected readonly menuOpen = signal(false);
+  protected readonly sidebarCollapsed = signal(false);
 
   protected toggleMenu(): void {
     this.menuOpen.update((open) => !open);
@@ -27,5 +28,9 @@ export class ShellComponent {
 
   protected closeMenu(): void {
     this.menuOpen.set(false);
+  }
+
+  protected toggleSidebar(): void {
+    this.sidebarCollapsed.update((collapsed) => !collapsed);
   }
 }

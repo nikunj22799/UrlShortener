@@ -58,6 +58,7 @@
     id="sidebar-navigation"
     class="sidebar"
     [class.sidebar--open]="menuOpen()"
+    [class.sidebar--collapsed]="sidebarCollapsed()"
   >
     <div class="sidebar-header">
       <a
@@ -82,6 +83,21 @@
           <small>Management Console</small>
         </span>
       </a>
+
+      <button
+        class="sidebar-toggle"
+        type="button"
+        [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        [attr.title]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        (click)="toggleSidebar()"
+      >
+        <i
+          class="bi"
+          [class.bi-chevron-right]="sidebarCollapsed()"
+          [class.bi-chevron-left]="!sidebarCollapsed()"
+          aria-hidden="true"
+        ></i>
+      </button>
     </div>
 
     <nav class="sidebar-nav" aria-label="Primary navigation">
@@ -91,6 +107,7 @@
         routerLinkActive="nav-item--active"
         [routerLinkActiveOptions]="{ exact: true }"
         (click)="closeMenu()"
+        [attr.title]="sidebarCollapsed() ? 'Dashboard' : null"
       >
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -108,6 +125,7 @@
         routerLink="/urls/new"
         routerLinkActive="nav-item--active"
         (click)="closeMenu()"
+        [attr.title]="sidebarCollapsed() ? 'Create URL' : null"
       >
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -127,6 +145,7 @@
         routerLinkActive="nav-item--active"
         [routerLinkActiveOptions]="{ exact: true }"
         (click)="closeMenu()"
+        [attr.title]="sidebarCollapsed() ? 'URL Management' : null"
       >
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -147,6 +166,7 @@
         routerLink="/analytics"
         routerLinkActive="nav-item--active"
         (click)="closeMenu()"
+        [attr.title]="sidebarCollapsed() ? 'Analytics' : null"
       >
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -171,6 +191,7 @@
         routerLink="/project-review"
         routerLinkActive="nav-item--active"
         (click)="closeMenu()"
+        [attr.title]="sidebarCollapsed() ? 'Project Review' : null"
       >
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
@@ -200,7 +221,10 @@
   </aside>
 
   <!-- Application content -->
-  <div class="content-shell">
+  <div
+    class="content-shell"
+    [class.content-shell--sidebar-collapsed]="sidebarCollapsed()"
+  >
     <main
       id="main-content"
       class="main-content"
