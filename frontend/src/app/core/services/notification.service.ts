@@ -10,6 +10,8 @@ export interface AppNotification {
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
+  private static readonly MAX_VISIBLE = 4;
+
   private nextId = 1;
   private readonly entries = signal<readonly AppNotification[]>([]);
 
@@ -33,6 +35,8 @@ export class NotificationService {
 
   private add(tone: NotificationTone, message: string): void {
     const notification: AppNotification = { id: this.nextId++, tone, message };
-    this.entries.update((entries) => [...entries, notification]);
+    this.entries.update((entries) =>
+      [...entries, notification].slice(-NotificationService.MAX_VISIBLE),
+    );
   }
 }
