@@ -1,6 +1,11 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  ViewChild,
   input,
   output,
 } from '@angular/core';
@@ -12,7 +17,9 @@ import {
   styleUrl: './confirmation-dialog.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfirmationDialogComponent {
+export class ConfirmationDialogComponent
+  implements AfterViewInit, OnDestroy
+{
   readonly dialogId = input.required<string>();
   readonly title = input.required<string>();
   readonly message = input.required<string>();
@@ -23,6 +30,27 @@ export class ConfirmationDialogComponent {
 
   readonly accepted = output<void>();
   readonly dismissed = output<void>();
+
+  @ViewChild('dialog')
+  private dialog?: ElementRef<HTMLElement>;
+
+  private readonly previouslyFocused =
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+
+  ngAfterViewInit(): void {
+    this.dialog?.nativeElement.focus();
+  }
+
+  ngOnDestroy(): void {
+    this.previouslyFocused?.focus();
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.dismiss();
+  }
 
   protected confirm(): void {
     if (!this.busy()) {

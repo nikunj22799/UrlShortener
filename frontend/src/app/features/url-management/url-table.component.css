@@ -335,17 +335,6 @@ tbody tr:hover {
 
 @media (max-width: 64rem) {
   .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .action-menu {
-    position: fixed;
-  }
-}
-
-@media (max-width: 48rem) {
-  .table-container {
     display: none;
   }
 

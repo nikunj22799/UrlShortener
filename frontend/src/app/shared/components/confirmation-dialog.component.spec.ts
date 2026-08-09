@@ -81,6 +81,30 @@ describe('ConfirmationDialogComponent', () => {
     expect(dismissed).toBeTrue();
   });
 
+  it('dismisses when Escape is pressed', () => {
+    let dismissed = false;
+
+    fixture.componentInstance.dismissed.subscribe(
+      () => {
+        dismissed = true;
+      },
+    );
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape' }),
+    );
+
+    expect(dismissed).toBeTrue();
+  });
+
+  it('focuses the dialog when opened', () => {
+    const dialog = (
+      fixture.nativeElement as HTMLElement
+    ).querySelector<HTMLElement>('[role="dialog"]');
+
+    expect(document.activeElement).toBe(dialog);
+  });
+
   it('blocks actions while busy', () => {
     fixture.componentRef.setInput(
       'busy',
