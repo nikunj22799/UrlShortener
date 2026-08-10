@@ -3,6 +3,7 @@ package com.example.urlshortener.config;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,6 +17,7 @@ public record ApplicationProperties(
         @Valid @NotNull Pagination pagination,
         @Valid @NotNull Analytics analytics,
         @Valid @NotNull Idempotency idempotency,
+        @Valid @NotNull Security security,
         @Valid @NotNull RateLimit rateLimit) {
 
     public ApplicationProperties {
@@ -75,9 +77,15 @@ public record ApplicationProperties(
             @Min(1) @Max(168) int retentionHours) {
     }
 
+    public record Security(
+            @NotBlank String username,
+            @NotBlank String passwordHash) {
+    }
+
     public record RateLimit(
             boolean enabled,
             @Min(100) @Max(1_000_000) int maximumIdentities,
+            @Valid @NotNull Policy login,
             @Valid @NotNull Policy create,
             @Valid @NotNull Policy redirect,
             @Valid @NotNull Policy management,

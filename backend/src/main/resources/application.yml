@@ -44,9 +44,15 @@ app:
     maximum-referrer-limit: ${ANALYTICS_MAXIMUM_REFERRER_LIMIT:100}
   idempotency:
     retention-hours: ${IDEMPOTENCY_RETENTION_HOURS:24}
+  security:
+    username: ${APP_ADMIN_USERNAME:}
+    password-hash: ${APP_ADMIN_PASSWORD_HASH:}
   rate-limit:
     enabled: ${RATE_LIMIT_ENABLED:true}
     maximum-identities: ${RATE_LIMIT_MAXIMUM_IDENTITIES:10000}
+    login:
+      requests: ${RATE_LIMIT_LOGIN_REQUESTS:5}
+      window-seconds: ${RATE_LIMIT_LOGIN_WINDOW_SECONDS:60}
     create:
       requests: ${RATE_LIMIT_CREATE_REQUESTS:30}
       window-seconds: ${RATE_LIMIT_CREATE_WINDOW_SECONDS:60}
@@ -71,6 +77,15 @@ management:
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:30m}
+      cookie:
+        name: URLSHORTENER_SESSION
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:true}
+        same-site: ${SESSION_COOKIE_SAME_SITE:none}
   shutdown: graceful
   error:
     include-message: never

@@ -81,6 +81,8 @@ function isApiErrorCode(value: string): value is ApiErrorCode {
     case 'OPTIMISTIC_LOCK_CONFLICT':
     case 'PRECONDITION_REQUIRED':
     case 'RATE_LIMIT_EXCEEDED':
+    case 'AUTHENTICATION_REQUIRED':
+    case 'ACCESS_DENIED':
     case 'INVALID_DATE_RANGE':
     case 'INTERNAL_ERROR':
     case 'SERVICE_UNAVAILABLE':

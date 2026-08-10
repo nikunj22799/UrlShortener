@@ -160,6 +160,7 @@
         <span>Spring Boot 3.5</span>
         <span>Spring Web</span>
         <span>Spring Data JPA</span>
+        <span>Spring Security</span>
         <span>JdbcTemplate</span>
       </div>
     </article>
@@ -297,6 +298,97 @@
       <strong>Analytics Reliability</strong>
       <p>Analytics is best-effort so valid redirects stay available.</p>
     </article>
+  </div>
+</section>
+
+<section class="review-section security-section">
+  <div class="section-heading">
+    <div>
+      <h2>Security</h2>
+      <p>
+        Authentication was added as a focused production safeguard without
+        introducing a full identity platform that the prototype does not need.
+      </p>
+    </div>
+  </div>
+
+  <div class="security-summary">
+    <div class="security-summary__icon">
+      <i class="bi bi-shield-lock" aria-hidden="true"></i>
+    </div>
+
+    <div>
+      <strong>Spring Security + Server-Side Session</strong>
+      <p>
+        A single administrator authenticates with an environment-configured
+        username and BCrypt password hash. Spring Security owns the session and
+        authorization boundary, while Angular provides login state and route guards.
+      </p>
+    </div>
+  </div>
+
+  <div class="security-grid">
+    <article class="security-card">
+      <i class="bi bi-person-lock" aria-hidden="true"></i>
+      <strong>Authentication</strong>
+      <p>Single admin account, BCrypt password verification, authenticated server session.</p>
+    </article>
+
+    <article class="security-card">
+      <i class="bi bi-cookie" aria-hidden="true"></i>
+      <strong>Secure Session</strong>
+      <p>HttpOnly, Secure cookie with session fixation protection and a 30-minute timeout.</p>
+    </article>
+
+    <article class="security-card">
+      <i class="bi bi-shield-check" aria-hidden="true"></i>
+      <strong>Request Protection</strong>
+      <p>CSRF protection, credential-aware restricted CORS, validation, and safe error responses.</p>
+    </article>
+
+    <article class="security-card">
+      <i class="bi bi-speedometer2" aria-hidden="true"></i>
+      <strong>Abuse Controls</strong>
+      <p>Existing endpoint-specific rate limits remain in place, with stricter login throttling.</p>
+    </article>
+  </div>
+
+  <div class="security-boundary">
+    <div class="security-boundary__column">
+      <span class="security-boundary__label security-boundary__label--public">Public</span>
+      <strong>Redirect + Health</strong>
+      <p>Short URL redirects and the deployment health endpoint remain accessible without login.</p>
+    </div>
+
+    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+
+    <div class="security-boundary__column">
+      <span class="security-boundary__label security-boundary__label--protected">Protected</span>
+      <strong>Management + Analytics</strong>
+      <p>URL creation, management, analytics, API documentation, and operational endpoints require authentication.</p>
+    </div>
+  </div>
+
+  <div class="security-limitations">
+    <div class="security-limitations__heading">
+      <i class="bi bi-info-circle" aria-hidden="true"></i>
+      <strong>Intentional Prototype Limitations</strong>
+    </div>
+
+    <div class="security-limitations__items">
+      <span>Single administrator only</span>
+      <span>No registration or password reset</span>
+      <span>No role / permission model</span>
+      <span>In-memory server sessions</span>
+      <span>Sessions end on backend restart</span>
+      <span>Single-instance rate-limit state</span>
+    </div>
+
+    <p>
+      These constraints are deliberate. Redis-backed sessions, distributed rate
+      limiting, multi-user identity, and external OAuth/OIDC were not introduced
+      because they would add infrastructure and complexity beyond the assessment scope.
+    </p>
   </div>
 </section>
 

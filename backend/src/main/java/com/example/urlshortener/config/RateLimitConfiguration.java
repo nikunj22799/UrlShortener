@@ -74,6 +74,7 @@ public class RateLimitConfiguration implements WebMvcConfigurer, HandlerIntercep
 
     private ApplicationProperties.Policy limits(Policy policy) {
         return switch (policy) {
+            case LOGIN -> properties.rateLimit().login();
             case CREATE -> properties.rateLimit().create();
             case REDIRECT -> properties.rateLimit().redirect();
             case MANAGEMENT -> properties.rateLimit().management();
@@ -84,6 +85,9 @@ public class RateLimitConfiguration implements WebMvcConfigurer, HandlerIntercep
     private Policy resolvePolicy(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
+        if ("POST".equals(method) && "/api/v1/auth/login".equals(path)) {
+            return Policy.LOGIN;
+        }
         if ("POST".equals(method) && "/api/v1/urls".equals(path)) {
             return Policy.CREATE;
         }
@@ -100,6 +104,7 @@ public class RateLimitConfiguration implements WebMvcConfigurer, HandlerIntercep
     }
 
     private enum Policy {
+        LOGIN,
         CREATE,
         REDIRECT,
         MANAGEMENT,

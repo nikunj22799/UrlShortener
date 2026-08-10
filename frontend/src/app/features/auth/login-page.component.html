@@ -1,0 +1,41 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <div class="login-brand" aria-hidden="true">
+      <i class="bi bi-link-45deg"></i>
+    </div>
+
+    <p class="eyebrow">Secure Access</p>
+    <h1 id="login-title">Sign in</h1>
+    <p class="login-copy">Authenticate to access the URL management console.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        autocomplete="username"
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+      />
+
+      @if (error(); as currentError) {
+        <p class="login-error" role="alert">{{ currentError }}</p>
+      }
+
+      <button class="button" type="submit" [disabled]="submitting()">
+        @if (submitting()) {
+          Signing in...
+        } @else {
+          Sign in
+        }
+      </button>
+    </form>
+  </section>
+</main>

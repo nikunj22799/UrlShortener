@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
+  Router,
 } from '@angular/router';
+import { AuthService } from '../../core/auth/auth.service';
 import { NotificationCenterComponent } from '../notification-center/notification-center.component';
 
 @Component({
@@ -19,6 +21,8 @@ import { NotificationCenterComponent } from '../notification-center/notification
   styleUrl: './shell.component.css',
 })
 export class ShellComponent {
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   protected readonly menuOpen = signal(false);
   protected readonly sidebarCollapsed = signal(false);
 
@@ -32,5 +36,11 @@ export class ShellComponent {
 
   protected toggleSidebar(): void {
     this.sidebarCollapsed.update((collapsed) => !collapsed);
+  }
+
+  protected logout(): void {
+    this.auth.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+    });
   }
 }

@@ -10,3 +10,15 @@ spring:
 logging:
   level:
     com.example.urlshortener: INFO
+
+app:
+  security:
+    username: ${APP_ADMIN_USERNAME:admin}
+    password-hash: ${APP_ADMIN_PASSWORD_HASH:$2y$12$4xLVQx/Cv05OODjZMZIsVeyKGTokGHYKRLmZwQg1agEvBEr/0uhF6}
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false
+        same-site: lax

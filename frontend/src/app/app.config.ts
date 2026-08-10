@@ -12,6 +12,7 @@ import {
 } from '@angular/router';
 
 import { routes } from './app.routes';
+import { authInterceptor } from './core/auth/auth.interceptor';
 import { apiErrorInterceptor } from './core/interceptors/api-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(
       withInterceptors([
+        authInterceptor,
         apiErrorInterceptor,
       ]),
     ),

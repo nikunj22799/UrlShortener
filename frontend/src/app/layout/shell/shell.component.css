@@ -251,6 +251,28 @@
   font-size: 0.68rem;
 }
 
+.logout-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+  border: 0;
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.6rem;
+  background: transparent;
+  color: #94a3b8;
+  font: inherit;
+  font-size: 0.73rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
 .version {
   margin: 0.5rem 0 0 1.25rem;
   color: #64748b;
@@ -301,6 +323,7 @@
 .sidebar--collapsed .nav-item > span:last-child,
 .sidebar--collapsed .nav-section-label,
 .sidebar--collapsed .environment-status > div,
+.sidebar--collapsed .logout-button span,
 .sidebar--collapsed .version {
   display: none;
 }
@@ -334,6 +357,11 @@
 
 .sidebar--collapsed .environment-status {
   gap: 0;
+}
+
+.sidebar--collapsed .logout-button {
+  width: auto;
+  justify-content: center;
 }
 
 
@@ -400,6 +428,7 @@
   .sidebar--collapsed .nav-item > span:last-child,
   .sidebar--collapsed .nav-section-label,
   .sidebar--collapsed .environment-status > div,
+  .sidebar--collapsed .logout-button span,
   .sidebar--collapsed .version {
     display: initial;
   }
