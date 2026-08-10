@@ -1,102 +1,85 @@
-<header class="page-header">
+<header class="page-header review-header">
   <div>
     <p class="eyebrow">Project Review</p>
 
     <h1>Project Review</h1>
 
     <p>
-      A concise technical overview of the application,
-      architecture, project structure, API design, and
-      implementation decisions.
+      A concise technical overview of the application, architecture,
+      engineering decisions, AI-assisted development, and codebase structure.
     </p>
   </div>
 
-  <div class="page-header__actions">
+  <div class="review-actions">
     <a
       class="button button--secondary"
-      href="/v3/api-docs"
+      href="https://github.com/nikunj22799/UrlShortner"
       target="_blank"
       rel="noopener noreferrer"
     >
-      OpenAPI
+      <i class="bi bi-github" aria-hidden="true"></i>
+      GitHub
     </a>
 
     <a
       class="button"
-      href="/swagger-ui/index.html"
+      href="https://url-shortener-frontend-otys.onrender.com/"
       target="_blank"
       rel="noopener noreferrer"
     >
-      <i
-  class="bi bi-box-arrow-up-right"
-  aria-hidden="true"
-></i>
-
-      Swagger UI
+      <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+      Live Application
     </a>
   </div>
 </header>
 
 <section class="review-section">
-  <header class="section-header">
+  <div class="section-heading">
     <div>
       <h2>URL Shortener</h2>
-
       <p>
-        A focused full-stack application for creating,
-        managing, redirecting, and analyzing shortened URLs.
+        A focused full-stack application for creating, managing,
+        redirecting, and analyzing shortened URLs.
       </p>
     </div>
-  </header>
+  </div>
 
-  <div class="feature-grid">
-    <article class="feature-card">
-      <span class="feature-icon">
-        <i
-  class="bi bi-server"
-  aria-hidden="true"
-></i>
+  <div class="capability-grid">
+    <article class="capability-card">
+      <span class="capability-icon">
+        <i class="bi bi-link-45deg" aria-hidden="true"></i>
       </span>
 
       <div>
         <h3>URL Lifecycle</h3>
-
         <p>
-          Create, enable, disable, expire, and soft-delete
+          Create, enable, disable, expire, redirect, and soft-delete
           shortened URLs.
         </p>
       </div>
     </article>
 
-    <article class="feature-card">
-      <span class="feature-icon">
-        <i
-  class="bi bi-server"
-  aria-hidden="true"
-></i>
+    <article class="capability-card">
+      <span class="capability-icon">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
       </span>
 
       <div>
         <h3>Reliable Backend</h3>
-
         <p>
-          Spring Boot APIs with idempotency, optimistic
-          locking, rate limiting, and consistent errors.
+          Idempotency, optimistic locking, rate limiting,
+          structured errors, and validation.
         </p>
       </div>
     </article>
 
-    <article class="feature-card">
-      <span class="feature-icon">
-        <i
-  class="bi bi-layers"
-  aria-hidden="true"
-></i>
+    <article class="capability-card">
+      <span class="capability-icon">
+        <i class="bi bi-bar-chart" aria-hidden="true"></i>
       </span>
 
       <div>
         <h3>Analytics</h3>
-
         <p>
           Redirect counts, traffic trends, referrers,
           devices, browsers, and operating systems.
@@ -104,17 +87,13 @@
       </div>
     </article>
 
-    <article class="feature-card">
-      <span class="feature-icon">
-        <i
-  class="bi bi-boxes"
-  aria-hidden="true"
-></i>
+    <article class="capability-card">
+      <span class="capability-icon">
+        <i class="bi bi-diagram-3" aria-hidden="true"></i>
       </span>
 
       <div>
         <h3>Simple Architecture</h3>
-
         <p>
           A modular monolith with clear frontend and backend
           boundaries without unnecessary infrastructure.
@@ -125,224 +104,421 @@
 </section>
 
 <section class="review-section">
-  <header class="section-header">
+  <div class="section-heading">
     <div>
       <h2>Request Flow</h2>
-
       <p>
-        The application intentionally follows a straightforward
-        request path that is easy to understand and maintain.
+        The request path stays straightforward so the system remains
+        easy to understand, test, and maintain.
       </p>
     </div>
-  </header>
+  </div>
 
-  <div
-    class="architecture-flow"
-    aria-label="Application request flow"
-  >
-    <article class="architecture-node">
-      <span class="node-number">
-        01
-      </span>
+  <div class="request-flow">
+    <article class="flow-card">
+      <span class="flow-number">01</span>
 
-      <i
-  class="bi bi-code-slash"
-  aria-hidden="true"
-></i>
+      <i class="bi bi-code-slash flow-icon" aria-hidden="true"></i>
 
       <strong>Angular</strong>
-
-      <small>
-        Pages and components
-      </small>
+      <small>Pages and components</small>
     </article>
 
-    <span
-      class="flow-line"
-      aria-hidden="true"
-    >
-      →
+    <span class="flow-arrow" aria-hidden="true">
+      <i class="bi bi-arrow-right"></i>
     </span>
 
-    <article class="architecture-node">
-      <span class="node-number">
-        02
-      </span>
+    <article class="flow-card">
+      <span class="flow-number">02</span>
 
-     <i
-  class="bi bi-diagram-3"
-  aria-hidden="true"
-></i>
+      <i class="bi bi-diagram-2 flow-icon" aria-hidden="true"></i>
 
       <strong>API Services</strong>
-
-      <small>
-        Typed HTTP communication
-      </small>
+      <small>Typed HTTP communication</small>
     </article>
 
-    <span
-      class="flow-line"
-      aria-hidden="true"
-    >
-      →
+    <span class="flow-arrow" aria-hidden="true">
+      <i class="bi bi-arrow-right"></i>
     </span>
 
-    <article class="architecture-node">
-      <span class="node-number">
-        03
-      </span>
+    <article class="flow-card">
+      <span class="flow-number">03</span>
 
-      <i
-  class="bi bi-server"
-  aria-hidden="true"
-></i>
+      <i class="bi bi-cpu flow-icon" aria-hidden="true"></i>
+
       <strong>Spring Boot</strong>
-
-      <small>
-        Business logic and APIs
-      </small>
+      <small>Business logic and APIs</small>
     </article>
 
-    <span
-      class="flow-line"
-      aria-hidden="true"
-    >
-      →
+    <span class="flow-arrow" aria-hidden="true">
+      <i class="bi bi-arrow-right"></i>
     </span>
 
-    <article class="architecture-node">
-      <span class="node-number">
-        04
-      </span>
+    <article class="flow-card">
+      <span class="flow-number">04</span>
 
-      <i
-  class="bi bi-layers"
-  aria-hidden="true"
-></i>
+      <i class="bi bi-database flow-icon" aria-hidden="true"></i>
 
       <strong>MySQL</strong>
-
-      <small>
-        Persistent storage
-      </small>
+      <small>Persistent storage</small>
     </article>
   </div>
 
   <div class="architecture-note">
-    <strong>
-      Why a modular monolith?
-    </strong>
+    <strong>Why a modular monolith?</strong>
 
     <p>
-      The project does not require distributed services,
-      messaging, or multiple deployment units. Keeping the
-      architecture simple reduces operational complexity while
-      still preserving clear module boundaries.
+      The project does not require distributed services, messaging,
+      or multiple deployment units. Keeping the architecture simple
+      reduces operational complexity while preserving clear module boundaries.
     </p>
   </div>
 </section>
 
 <section class="review-section">
-  <header class="section-header">
+  <div class="section-heading">
     <div>
       <h2>Technology Stack</h2>
+      <p>
+        The main technologies used across application development,
+        quality, deployment, and operations.
+      </p>
     </div>
-  </header>
+  </div>
 
   <div class="technology-grid">
-    <article>
-      <strong>Frontend</strong>
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon">
+          <i class="bi bi-window" aria-hidden="true"></i>
+        </span>
 
-      <span>
-        Angular 19
-      </span>
+        <div>
+          <strong>Frontend</strong>
+          <small>Angular SPA</small>
+        </div>
+      </div>
 
-      <span>
-        TypeScript
-      </span>
-
-      <span>
-        Signals + RxJS
-      </span>
+      <div class="technology-tags">
+        <span>Angular 19</span>
+        <span>TypeScript 5.8</span>
+        <span>Signals</span>
+        <span>RxJS</span>
+        <span>Bootstrap Icons</span>
+      </div>
     </article>
 
-    <article>
-      <strong>Backend</strong>
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon technology-icon--green">
+          <i class="bi bi-cpu" aria-hidden="true"></i>
+        </span>
 
-      <span>
-        Java
-      </span>
+        <div>
+          <strong>Backend</strong>
+          <small>Java APIs</small>
+        </div>
+      </div>
 
-      <span>
-        Spring Boot
-      </span>
-
-      <span>
-        Spring Data JPA
-      </span>
-
-      <span>
-        JdbcTemplate
-      </span>
+      <div class="technology-tags">
+        <span>Java 21</span>
+        <span>Spring Boot 3.5</span>
+        <span>Spring Web</span>
+        <span>Spring Data JPA</span>
+        <span>JdbcTemplate</span>
+      </div>
     </article>
 
-    <article>
-      <strong>Database</strong>
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon technology-icon--orange">
+          <i class="bi bi-database" aria-hidden="true"></i>
+        </span>
 
-      <span>
-        MySQL
-      </span>
+        <div>
+          <strong>Database</strong>
+          <small>Persistence</small>
+        </div>
+      </div>
 
-      <span>
-        Flyway
-      </span>
+      <div class="technology-tags">
+        <span>MySQL</span>
+        <span>Hibernate</span>
+        <span>Flyway</span>
+        <span>Aiven</span>
+      </div>
     </article>
 
-    <article>
-      <strong>Quality</strong>
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon technology-icon--purple">
+          <i class="bi bi-check2-circle" aria-hidden="true"></i>
+        </span>
 
-      <span>
-        Jasmine / Karma
-      </span>
+        <div>
+          <strong>Quality</strong>
+          <small>Validation</small>
+        </div>
+      </div>
 
-      <span>
-        Playwright
-      </span>
+      <div class="technology-tags">
+        <span>JUnit</span>
+        <span>Testcontainers</span>
+        <span>Jasmine / Karma</span>
+        <span>Playwright</span>
+        <span>axe-core</span>
+        <span>JaCoCo</span>
+      </div>
+    </article>
 
-      <span>
-        OpenAPI
-      </span>
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon technology-icon--indigo">
+          <i class="bi bi-box-seam" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <strong>Build & Deployment</strong>
+          <small>Runtime</small>
+        </div>
+      </div>
+
+      <div class="technology-tags">
+        <span>Maven</span>
+        <span>npm</span>
+        <span>Docker</span>
+        <span>Nginx</span>
+        <span>Render</span>
+      </div>
+    </article>
+
+    <article class="technology-card">
+      <div class="technology-card__header">
+        <span class="technology-icon technology-icon--slate">
+          <i class="bi bi-tools" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <strong>Platform</strong>
+          <small>API & Operations</small>
+        </div>
+      </div>
+
+      <div class="technology-tags">
+        <span>OpenAPI</span>
+        <span>Swagger</span>
+        <span>Spring Actuator</span>
+        <span>Correlation IDs</span>
+        <span>ESLint</span>
+      </div>
     </article>
   </div>
 </section>
 
 <section class="review-section">
-  <header class="section-header">
+  <div class="section-heading">
     <div>
-      <h2>Project Structure</h2>
-
+      <h2>Core Engineering</h2>
       <p>
-        Browse the frontend and backend organization without
-        opening the repository manually.
+        Reliability and consistency controls added beyond the basic
+        application workflows.
       </p>
     </div>
-  </header>
+  </div>
 
-  <app-project-structure />
+  <div class="engineering-grid">
+    <article class="engineering-card">
+      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+      <strong>Idempotency</strong>
+      <p>Request key + fingerprint prevents duplicate creation on retries.</p>
+    </article>
+
+    <article class="engineering-card">
+      <i class="bi bi-layers" aria-hidden="true"></i>
+      <strong>Concurrency</strong>
+      <p><code>&#64;Version</code> + <code>If-Match</code> prevents lost updates.</p>
+    </article>
+
+    <article class="engineering-card">
+      <i class="bi bi-speedometer2" aria-hidden="true"></i>
+      <strong>Rate Limiting</strong>
+      <p>Endpoint-specific limits protect different traffic patterns.</p>
+    </article>
+
+    <article class="engineering-card">
+      <i class="bi bi-database-check" aria-hidden="true"></i>
+      <strong>Data Integrity</strong>
+      <p>Application validation plus final database constraints.</p>
+    </article>
+
+    <article class="engineering-card">
+      <i class="bi bi-activity" aria-hidden="true"></i>
+      <strong>Observability</strong>
+      <p>Correlation IDs and health/metrics support troubleshooting.</p>
+    </article>
+
+    <article class="engineering-card">
+      <i class="bi bi-graph-up" aria-hidden="true"></i>
+      <strong>Analytics Reliability</strong>
+      <p>Analytics is best-effort so valid redirects stay available.</p>
+    </article>
+  </div>
 </section>
 
 <section class="review-section">
-  <header class="section-header">
+  <div class="section-heading">
     <div>
-      <h2>README</h2>
-
+      <h2>AI-Assisted Engineering</h2>
       <p>
-        The same project documentation available in the
-        repository, rendered directly inside the application.
+        Specialized agents accelerated specific engineering tasks while
+        requirements, architecture, trade-offs, and approval remained human-owned.
       </p>
     </div>
-  </header>
+  </div>
 
-  <app-readme-viewer />
+  <div class="ai-flow">
+    <div class="ai-flow__stage ai-flow__stage--engineer">
+      <i class="bi bi-person-badge" aria-hidden="true"></i>
+      <strong>Engineer</strong>
+      <span>Intent · Context · Constraints</span>
+    </div>
+
+    <i class="bi bi-arrow-right ai-flow__arrow" aria-hidden="true"></i>
+
+    <div class="ai-flow__stage">
+      <i class="bi bi-stars" aria-hidden="true"></i>
+      <strong>AI Assistance</strong>
+      <span>Analysis · Code · Review</span>
+    </div>
+
+    <i class="bi bi-arrow-right ai-flow__arrow" aria-hidden="true"></i>
+
+    <div class="ai-flow__stage ai-flow__stage--engineer">
+      <i class="bi bi-check2-square" aria-hidden="true"></i>
+      <strong>Engineer Review</strong>
+      <span>Accept · Modify · Reject</span>
+    </div>
+  </div>
+
+  <div class="agent-grid">
+    <article class="agent-card agent-card--architecture">
+      <span class="agent-card__icon">
+        <i class="bi bi-diagram-3" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="agent-type">Design</span>
+        <h3>architecture-agent</h3>
+        <p>
+          Architecture alternatives, boundaries,
+          scalability, and trade-offs.
+        </p>
+      </div>
+    </article>
+
+    <article class="agent-card agent-card--backend">
+      <span class="agent-card__icon">
+        <i class="bi bi-cpu" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="agent-type">Implementation</span>
+        <h3>backend-agent</h3>
+        <p>
+          Spring Boot APIs, persistence,
+          reliability, and refactoring.
+        </p>
+      </div>
+    </article>
+
+    <article class="agent-card agent-card--frontend">
+      <span class="agent-card__icon">
+        <i class="bi bi-window" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="agent-type">Implementation</span>
+        <h3>frontend-agent</h3>
+        <p>
+          Angular UI, API integration,
+          responsive design, and usability.
+        </p>
+      </div>
+    </article>
+
+    <article class="agent-card agent-card--security">
+      <span class="agent-card__badge">Review Gate</span>
+
+      <span class="agent-card__icon">
+        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="agent-type">Independent Review</span>
+        <h3>security-review-agent</h3>
+        <p>
+          Validation, API exposure, error handling,
+          CORS, abuse controls, and security boundaries.
+        </p>
+      </div>
+    </article>
+
+    <article class="agent-card agent-card--quality">
+      <span class="agent-card__badge">Review Gate</span>
+
+      <span class="agent-card__icon">
+        <i class="bi bi-clipboard2-check" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="agent-type">Independent Review</span>
+        <h3>testing-quality-agent</h3>
+        <p>
+          Edge cases, regression risk,
+          missing coverage, and quality gates.
+        </p>
+      </div>
+    </article>
+  </div>
+
+  <div class="ai-decision-strip">
+    <span>
+      <i class="bi bi-x-circle" aria-hidden="true"></i>
+      Microservices rejected
+    </span>
+
+    <span>
+      <i class="bi bi-clock-history" aria-hidden="true"></i>
+      Redis deferred
+    </span>
+
+    <span>
+      <i class="bi bi-check-circle" aria-hidden="true"></i>
+      Concurrency refined
+    </span>
+
+    <span>
+      <i class="bi bi-check-circle" aria-hidden="true"></i>
+      Idempotency validated
+    </span>
+
+    <span>
+      <i class="bi bi-sliders" aria-hidden="true"></i>
+      Extra abstractions simplified
+    </span>
+  </div>
+</section>
+
+<section class="review-section">
+  <div class="section-heading">
+    <div>
+      <h2>Project Structure</h2>
+      <p>
+        Backend and frontend are displayed side by side and remain
+        interactive for quick codebase inspection.
+      </p>
+    </div>
+  </div>
+
+  <app-project-structure />
 </section>

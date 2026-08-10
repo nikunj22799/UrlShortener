@@ -48,9 +48,18 @@ export class ProjectStructureComponent {
   protected readonly loading = signal(true);
   protected readonly loadFailed = signal(false);
 
-  protected readonly visibleNodes = computed(() =>
-    flattenVisibleNodes(
+  protected readonly backendNodes = computed(() =>
+    visibleRootNodes(
       this.structure()?.nodes ?? [],
+      'backend',
+      this.expandedPaths(),
+    ),
+  );
+
+  protected readonly frontendNodes = computed(() =>
+    visibleRootNodes(
+      this.structure()?.nodes ?? [],
+      'frontend',
       this.expandedPaths(),
     ),
   );
@@ -71,11 +80,9 @@ export class ProjectStructureComponent {
       .subscribe({
         next: (structure) => {
           this.structure.set(structure);
-
           this.expandedPaths.set(
             initialExpandedPaths(structure.nodes),
           );
-
           this.loading.set(false);
         },
         error: () => {
@@ -110,25 +117,68 @@ export class ProjectStructureComponent {
 function initialExpandedPaths(
   nodes: readonly ProjectNode[],
 ): ReadonlySet<string> {
-  return new Set(
-    nodes
-      .filter((node) => node.type === 'directory')
-      .map((node) => node.name),
+  const expanded = new Set<string>();
+
+  for (const root of nodes) {
+    if (
+      root.type !== 'directory' ||
+      (root.name !== 'backend' && root.name !== 'frontend')
+    ) {
+      continue;
+    }
+
+    expanded.add(root.name);
+
+    for (const child of root.children ?? []) {
+      if (
+        child.type === 'directory' &&
+        !shouldHideNode(child.name, root.name)
+      ) {
+        expanded.add(`${root.name}/${child.name}`);
+      }
+    }
+  }
+
+  return expanded;
+}
+
+function visibleRootNodes(
+  nodes: readonly ProjectNode[],
+  rootName: 'backend' | 'frontend',
+  expandedPaths: ReadonlySet<string>,
+): readonly VisibleProjectNode[] {
+  const root = nodes.find(
+    (node) =>
+      node.type === 'directory' &&
+      node.name === rootName,
+  );
+
+  if (!root?.children) {
+    return [];
+  }
+
+  return flattenVisibleNodes(
+    root.children,
+    expandedPaths,
+    root.name,
+    0,
   );
 }
 
 function flattenVisibleNodes(
   nodes: readonly ProjectNode[],
   expandedPaths: ReadonlySet<string>,
-  parentPath = '',
-  level = 0,
+  parentPath: string,
+  level: number,
 ): readonly VisibleProjectNode[] {
   const visible: VisibleProjectNode[] = [];
 
   for (const node of nodes) {
-    const path = parentPath
-      ? `${parentPath}/${node.name}`
-      : node.name;
+    if (shouldHideNode(node.name, parentPath)) {
+      continue;
+    }
+
+    const path = `${parentPath}/${node.name}`;
 
     visible.push({
       ...node,
@@ -153,4 +203,22 @@ function flattenVisibleNodes(
   }
 
   return visible;
+}
+
+function shouldHideNode(
+  name: string,
+  parentPath: string,
+): boolean {
+  const normalizedPath = `${parentPath}/${name}`
+    .replaceAll('\\', '/')
+    .toLowerCase();
+
+  if (
+    normalizedPath.includes('/db/migration') ||
+    normalizedPath.endsWith('/migration')
+  ) {
+    return true;
+  }
+
+  return /^v\d+__.+\.sql$/i.test(name);
 }

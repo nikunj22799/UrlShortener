@@ -1,67 +1,67 @@
 <section class="readme-card">
-<div class="readme-header">
-  <div class="readme-heading">
-    <span class="readme-icon" aria-hidden="true">
-      <i class="bi bi-file-earmark-text"></i>
-    </span>
+  <header class="readme-header">
+    <div class="readme-heading">
+      <span class="readme-icon" aria-hidden="true">
+        <i class="bi bi-file-earmark-text"></i>
+      </span>
 
-    <div>
-      <h3>README.md</h3>
-
-      <p>
-        Project documentation rendered from the repository README.
-      </p>
-    </div>
-  </div>
-
-  <a
-    class="raw-link"
-    href="/README.md"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    View raw
-
-    <i
-      class="bi bi-box-arrow-up-right"
-      aria-hidden="true"
-    ></i>
-  </a>
-</div>
-
-@if (loading()) {
-  <div class="readme-state">
-    Loading README...
-  </div>
-} @else if (loadFailed()) {
-  <div class="readme-error">
-    <div>
-      <strong>
-        README unavailable
-      </strong>
-
-      <p>
-        The project README could not be loaded.
-      </p>
+      <div>
+        <p class="readme-eyebrow">Engineering documentation</p>
+        <h2>Project README</h2>
+        <p class="readme-description">
+          Architecture, engineering decisions, AI-assisted execution,
+          validation, deployment, and project setup.
+        </p>
+      </div>
     </div>
 
-    <button
-      class="button button--secondary button--small"
-      type="button"
-      (click)="loadReadme()"
+    <a
+      class="raw-link"
+      href="/README.md"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <i
-        class="bi bi-arrow-clockwise"
+        class="bi bi-box-arrow-up-right"
         aria-hidden="true"
       ></i>
+      View raw
+    </a>
+  </header>
 
-      Retry
-    </button>
-  </div>
-} @else {
-  <article
-    class="markdown-content"
-    [innerHTML]="renderedReadme()"
-  ></article>
-}
+  @if (loading()) {
+    <div class="readme-state">
+      <span
+        class="spinner-border spinner-border-sm"
+        aria-hidden="true"
+      ></span>
+      <span>Loading project documentation...</span>
+    </div>
+  } @else if (loadFailed()) {
+    <div class="readme-state readme-state--error">
+      <div>
+        <strong>README unavailable</strong>
+        <p>
+          The project documentation could not be loaded.
+        </p>
+      </div>
+
+      <button
+        class="button button--secondary button--small"
+        type="button"
+        (click)="loadReadme()"
+      >
+        <i
+          class="bi bi-arrow-clockwise"
+          aria-hidden="true"
+        ></i>
+        Retry
+      </button>
+    </div>
+  } @else {
+    <article
+      class="markdown-content"
+      [innerHTML]="renderedReadme()"
+    ></article>
+  }
 </section>

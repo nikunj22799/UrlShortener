@@ -1,27 +1,48 @@
-<div class="project-structure-header">
+<header class="structure-header">
   <div>
+    <p class="structure-eyebrow">Codebase</p>
     <h2>Project Structure</h2>
-
     <p>
-      Expand folders to inspect the main frontend and
-      backend organization.
+      Backend and frontend are shown side by side, matching the repository
+      organization summarized in the README.
     </p>
   </div>
-</div>
+
+  @if (structure(); as project) {
+    @if (project.scope || project.exclusions?.length) {
+      <div class="structure-meta">
+        @if (project.scope) {
+          <span>
+            <i class="bi bi-bounding-box" aria-hidden="true"></i>
+            {{ project.scope }}
+          </span>
+        }
+
+        @if (project.exclusions?.length) {
+          <span>
+            <i class="bi bi-eye-slash" aria-hidden="true"></i>
+            Excludes generated/dependency content
+          </span>
+        }
+      </div>
+    }
+  }
+</header>
 
 @if (loading()) {
-  <div class="project-structure-state">
+  <div class="structure-state">
+    <span
+      class="spinner-border spinner-border-sm"
+      aria-hidden="true"
+    ></span>
     Loading project structure...
   </div>
 } @else if (loadFailed()) {
-  <div class="project-structure-error">
+  <div class="structure-state structure-state--error">
     <div>
-      <strong>
-        Project structure unavailable
-      </strong>
-
+      <strong>Project structure unavailable</strong>
       <p>
-        The structure metadata could not be loaded.
+        The generated structure metadata could not be loaded.
       </p>
     </div>
 
@@ -34,112 +55,188 @@
         class="bi bi-arrow-clockwise"
         aria-hidden="true"
       ></i>
-
       Retry
     </button>
   </div>
 } @else {
-  @if (structure(); as project) {
-    @if (
-      project.scope ||
-      project.exclusions?.length
-    ) {
-      <div class="project-structure-meta">
-        @if (project.scope) {
-          <span>
-            Scope: {{ project.scope }}
-          </span>
-        }
+  <div class="structure-grid">
+    <section class="structure-column">
+      <header class="structure-column__header structure-column__header--backend">
+        <span class="structure-column__icon">
+          <i class="bi bi-cpu" aria-hidden="true"></i>
+        </span>
 
-        @if (project.exclusions?.length) {
-          <span>
-            Excludes:
-            {{ project.exclusions?.join(', ') }}
-          </span>
-        }
-      </div>
-    }
+        <div>
+          <strong>Backend</strong>
+          <small>Java 21 · Spring Boot</small>
+        </div>
 
-    <div class="tree-shell">
-      <ul
-        class="project-tree"
-        aria-label="Project structure"
-      >
-        @for (
-          node of visibleNodes();
-          track node.path
-        ) {
-          <li
-            class="tree-row"
-            [style.--tree-level]="node.level"
+        <span class="structure-column__root">backend/</span>
+      </header>
+
+      @if (backendNodes().length) {
+        <div class="tree-shell">
+          <ul
+            class="project-tree"
+            aria-label="Backend project structure"
           >
-            @if (node.type === 'directory') {
-              <button
-                class="tree-item tree-item--directory"
-                type="button"
-                [attr.aria-expanded]="
-                  isExpanded(node.path)
-                "
-                (click)="toggleNode(node)"
+            @for (
+              node of backendNodes();
+              track node.path
+            ) {
+              <li
+                class="tree-row"
+                [style.--tree-level]="node.level"
               >
-                <span class="tree-chevron">
-                  @if (isExpanded(node.path)) {
-                    <i
-                      class="bi bi-chevron-down"
-                      aria-hidden="true"
-                    ></i>
-                  } @else {
-                    <i
-                      class="bi bi-chevron-right"
-                      aria-hidden="true"
-                    ></i>
-                  }
-                </span>
+                @if (node.type === 'directory') {
+                  <button
+                    class="tree-item tree-item--directory"
+                    type="button"
+                    [attr.aria-expanded]="isExpanded(node.path)"
+                    (click)="toggleNode(node)"
+                  >
+                    <span class="tree-chevron">
+                      <i
+                        class="bi"
+                        [class.bi-chevron-down]="isExpanded(node.path)"
+                        [class.bi-chevron-right]="!isExpanded(node.path)"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
 
-                <span class="tree-icon">
-                  @if (isExpanded(node.path)) {
-                    <i
-                      class="bi bi-folder2-open"
+                    <span class="tree-icon">
+                      <i
+                        class="bi"
+                        [class.bi-folder2-open]="isExpanded(node.path)"
+                        [class.bi-folder]="!isExpanded(node.path)"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+
+                    <span class="tree-name">
+                      {{ node.name }}/
+                    </span>
+                  </button>
+                } @else {
+                  <div class="tree-item tree-item--file">
+                    <span
+                      class="tree-chevron"
                       aria-hidden="true"
-                    ></i>
-                  } @else {
-                    <i
-                      class="bi bi-folder"
-                      aria-hidden="true"
-                    ></i>
-                  }
-                </span>
+                    ></span>
 
-                <span class="tree-name">
-                  {{ node.name }}
-                </span>
-              </button>
-            } @else {
-              <div
-                class="tree-item tree-item--file"
-              >
-                <span
-                  class="tree-chevron"
-                  aria-hidden="true"
-                ></span>
+                    <span class="tree-icon tree-icon--file">
+                      <i
+                        class="bi bi-file-earmark-code"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
 
-                <span
-                  class="tree-icon tree-icon--file"
-                >
-                  <i
-                    class="bi bi-file-earmark"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-
-                <span class="tree-name">
-                  {{ node.name }}
-                </span>
-              </div>
+                    <span class="tree-name">
+                      {{ node.name }}
+                    </span>
+                  </div>
+                }
+              </li>
             }
-          </li>
-        }
-      </ul>
-    </div>
-  }
+          </ul>
+        </div>
+      } @else {
+        <div class="column-empty">
+          Backend structure is not present in the generated metadata.
+        </div>
+      }
+    </section>
+
+    <section class="structure-column">
+      <header class="structure-column__header structure-column__header--frontend">
+        <span class="structure-column__icon">
+          <i class="bi bi-window" aria-hidden="true"></i>
+        </span>
+
+        <div>
+          <strong>Frontend</strong>
+          <small>Angular 19 · TypeScript</small>
+        </div>
+
+        <span class="structure-column__root">frontend/</span>
+      </header>
+
+      @if (frontendNodes().length) {
+        <div class="tree-shell">
+          <ul
+            class="project-tree"
+            aria-label="Frontend project structure"
+          >
+            @for (
+              node of frontendNodes();
+              track node.path
+            ) {
+              <li
+                class="tree-row"
+                [style.--tree-level]="node.level"
+              >
+                @if (node.type === 'directory') {
+                  <button
+                    class="tree-item tree-item--directory"
+                    type="button"
+                    [attr.aria-expanded]="isExpanded(node.path)"
+                    (click)="toggleNode(node)"
+                  >
+                    <span class="tree-chevron">
+                      <i
+                        class="bi"
+                        [class.bi-chevron-down]="isExpanded(node.path)"
+                        [class.bi-chevron-right]="!isExpanded(node.path)"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+
+                    <span class="tree-icon">
+                      <i
+                        class="bi"
+                        [class.bi-folder2-open]="isExpanded(node.path)"
+                        [class.bi-folder]="!isExpanded(node.path)"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+
+                    <span class="tree-name">
+                      {{ node.name }}/
+                    </span>
+                  </button>
+                } @else {
+                  <div class="tree-item tree-item--file">
+                    <span
+                      class="tree-chevron"
+                      aria-hidden="true"
+                    ></span>
+
+                    <span class="tree-icon tree-icon--file">
+                      <i
+                        class="bi bi-file-earmark-code"
+                        aria-hidden="true"
+                      ></i>
+                    </span>
+
+                    <span class="tree-name">
+                      {{ node.name }}
+                    </span>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <div class="column-empty">
+          Frontend structure is not present in the generated metadata.
+        </div>
+      }
+    </section>
+  </div>
+
+  <div class="structure-hint">
+    <i class="bi bi-hand-index-thumb" aria-hidden="true"></i>
+    Select a folder to expand or collapse it.
+  </div>
 }
