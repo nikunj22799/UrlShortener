@@ -54,13 +54,11 @@ public class SecurityConfig {
             HttpSecurity http,
             ObjectMapper objectMapper) throws Exception {
         http
-                .cors(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .sessionFixation(fixation -> fixation.changeSessionId()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/r/**").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/r/**").permitAll()

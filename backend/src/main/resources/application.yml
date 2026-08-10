@@ -85,7 +85,7 @@ server:
         name: URLSHORTENER_SESSION
         http-only: true
         secure: ${SESSION_COOKIE_SECURE:true}
-        same-site: ${SESSION_COOKIE_SAME_SITE:none}
+        same-site: ${SESSION_COOKIE_SAME_SITE:lax}
   shutdown: graceful
   error:
     include-message: never
