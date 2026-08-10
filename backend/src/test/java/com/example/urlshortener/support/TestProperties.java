@@ -13,9 +13,13 @@ public final class TestProperties {
                 new ApplicationProperties.Pagination(20, 100),
                 new ApplicationProperties.Analytics(7, 90, 7, 10, 100),
                 new ApplicationProperties.Idempotency(24),
+                new ApplicationProperties.Security(
+                        "test-admin",
+                        "$2y$12$4xLVQx/Cv05OODjZMZIsVeyKGTokGHYKRLmZwQg1agEvBEr/0uhF6"),
                 new ApplicationProperties.RateLimit(
                         true,
                         10_000,
+                        new ApplicationProperties.Policy(5, 60),
                         new ApplicationProperties.Policy(30, 60),
                         new ApplicationProperties.Policy(300, 60),
                         new ApplicationProperties.Policy(120, 60),
@@ -31,9 +35,11 @@ public final class TestProperties {
                 properties.pagination(),
                 properties.analytics(),
                 properties.idempotency(),
+                properties.security(),
                 new ApplicationProperties.RateLimit(
                         enabled,
                         10_000,
+                        new ApplicationProperties.Policy(5, 60),
                         new ApplicationProperties.Policy(30, 60),
                         new ApplicationProperties.Policy(300, 60),
                         new ApplicationProperties.Policy(120, 60),
