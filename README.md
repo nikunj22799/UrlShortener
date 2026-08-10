@@ -17,7 +17,8 @@ Frontend                    Backend                     Data
 Angular 19.2                Java 21                     MySQL
 TypeScript 5.8              Spring Boot 3.5            Flyway
 Signals + RxJS              Spring Web                 JPA / Hibernate
-Bootstrap Icons             Spring Validation          JdbcTemplate
+Bootstrap Icons             Spring Security            JdbcTemplate
+                            Spring Validation
                             Spring Data JPA
                             Spring Actuator
                             OpenAPI / Swagger
@@ -92,7 +93,11 @@ That gives me simple deployment and debugging today, while preserving logical bo
 | Safe retries | `Idempotency-Key` support on create |
 | Concurrent updates | JPA `@Version` + HTTP `If-Match` / ETag |
 | Analytics | Summary, time series, referrers, devices, browsers, OS |
-| Abuse protection | Separate rate limits for create, redirect, management, analytics |
+| Authentication | Spring Security + BCrypt + server-side session authentication |
+| Authorization | Management and analytics APIs require an authenticated admin session |
+| CSRF protection | Spring Security CSRF token validation for state-changing requests |
+| Session security | `HttpOnly`, `Secure`, `SameSite=Lax` session cookie with 30-minute timeout |
+| Abuse protection | Separate rate limits for login, create, redirect, management, analytics |
 | Error contract | Centralized structured API errors |
 | Observability | Correlation IDs, Actuator health/metrics |
 | Database evolution | Flyway migrations |
@@ -108,7 +113,9 @@ That gives me simple deployment and debugging today, while preserving logical bo
 |---|---|---|
 | **Idempotency** | Request key + fingerprint | Prevent duplicate creation on retries |
 | **Concurrency** | JPA `@Version` + `If-Match` | Prevent lost updates |
-| **Rate Limiting** | Endpoint-specific limits | Protect APIs from excessive traffic |
+| **Authentication** | Spring Security + BCrypt + server-side session | Protect administrative functionality |
+| **CSRF Protection** | Session-bound CSRF token | Protect authenticated state-changing requests |
+| **Rate Limiting** | Endpoint-specific limits, including login | Protect APIs from excessive traffic |
 | **Data Integrity** | Validation + DB constraints | Enforce URL and uniqueness rules |
 | **Analytics Reliability** | Best-effort recording | Analytics failure does not break redirects |
 | **Schema Evolution** | Flyway | Version-controlled DB changes |
@@ -462,11 +469,58 @@ Engineer Sign-Off
 - axe-core
 - manual responsive review
 
-### Security boundary
+### Security implementation
 
-Security controls include validation, rate limiting, CORS, controlled error exposure, database constraints, bounded requests, and correlation IDs.
+The prototype includes a deliberately small authentication model rather than leaving management APIs publicly accessible.
 
-A complete authentication/authorization model is outside the current prototype scope. For a public multi-user deployment, management and analytics APIs would need Spring Security with OAuth 2.0 / OIDC and appropriate authorization rules.
+```text
+Angular Login
+     │
+     ▼
+Spring Security
+     │
+     ├── BCrypt credential verification
+     ├── Server-side authenticated session
+     ├── CSRF validation
+     └── Login rate limiting
+             │
+             ▼
+     Protected Management APIs
+```
+
+**Implemented controls**
+
+- Single administrator account configured through environment variables
+- BCrypt password hash; the plaintext production password is not stored in source control
+- Server-side Spring Security session authentication
+- `HttpOnly` and `Secure` authentication cookie with `SameSite=Lax`
+- 30-minute session timeout
+- Session fixation protection through Spring Security
+- CSRF protection for authenticated state-changing requests
+- Angular route guard for management UI navigation
+- Backend authorization remains the actual security boundary
+- Login-specific rate limiting in addition to existing endpoint-specific limits
+- Public redirect endpoints remain accessible without authentication
+- Health endpoint remains public for deployment health checks
+- Controlled error responses and security headers
+
+The production frontend calls `/api/*` on its own Render origin. Render rewrites those requests to the Spring Boot service, keeping browser API traffic same-origin and avoiding a cross-site authentication-cookie dependency.
+
+### Authentication scope and limitations
+
+The authentication model is intentionally sized for a recruitment prototype with one administrator.
+
+| Current Decision | Limitation / Evolution |
+|---|---|
+| **Single administrator** | No registration, multiple user accounts, or per-user URL ownership |
+| **Environment-configured credentials** | Password changes require updating deployment configuration rather than using a password-management UI |
+| **Server-side in-memory session** | Active sessions are lost when the backend restarts |
+| **Single backend instance assumption** | Horizontal scaling would require a shared session store such as Redis / Spring Session |
+| **Instance-local login/API rate limits** | Multiple backend instances would require shared or gateway-level coordination |
+| **No roles/permissions model** | Appropriate while there is only one administrative identity |
+| **No OAuth 2.0 / OIDC** | External identity integration can be introduced if real multi-user or enterprise requirements appear |
+
+JWT, refresh tokens, registration flows, role tables, and external identity providers were intentionally not added because they would increase complexity without solving a current requirement.
 
 ---
 
@@ -506,7 +560,11 @@ User
 Angular Frontend
 Render - Static Web Service
  │
- ▼
+ ├── Angular routes → /index.html
+ │
+ └── /api/* rewrite
+          │
+          ▼
 Spring Boot Backend
 Render - Web Service
  │
@@ -534,7 +592,7 @@ Render and Aiven are third-party services used to host the assessment environmen
 | **Instance-local rate limiting** | Appropriate for current deployment; Redis or gateway coordination is needed for multiple instances |
 | **Best-effort analytics** | Redirect availability is prioritized over guaranteed analytics delivery |
 | **Optimistic locking** | Fits low-contention management operations |
-| **No authentication/authorization** | Acceptable for assessment scope; public multi-user deployment would require OAuth 2.0 / OIDC |
+| **Single-admin session authentication** | Keeps the prototype secure and small; multi-user requirements would need user identity/authorization and potentially a shared session store |
 
 ---
 
@@ -580,6 +638,8 @@ CREATE DATABASE url_shortener;
 ```
 
 Configure using `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, and `DB_PASSWORD`.
+
+Production authentication also requires `APP_ADMIN_USERNAME` and `APP_ADMIN_PASSWORD_HASH`. `APP_ADMIN_PASSWORD_HASH` must contain a BCrypt hash rather than the plaintext password.
 
 ### Backend
 
