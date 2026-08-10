@@ -1,147 +1,625 @@
-# Link Operations URL Shortener
+# URL Shortener
 
-Link Operations is a controlled engineering prototype for creating, managing, redirecting, and analyzing short URLs. It pairs a strict standalone Angular SPA with a Java 21 / Spring Boot modular monolith, MySQL, and Flyway. It also includes reviewer-facing evidence pages that clearly separate observed demo behavior from production approval.
+A focused full-stack URL management platform for creating, managing, redirecting, and analyzing short URLs.
 
-This repository does **not** claim production use or production readiness. Management APIs are unauthenticated, abuse controls and production operations evidence are incomplete, and all human approval gates are pending.
+---
 
-## Architecture at a glance
+**Project GitHub:** <https://github.com/nikunj22799/UrlShortener>  
+**Live Application:** <https://url-shortener-frontend-otys.onrender.com/>
 
-- `frontend/`: Angular SPA with typed API services, accessible responsive workflows, engineering review, readiness, and optional portfolio routes.
-- `backend/`: Spring Boot modules for URL lifecycle, redirect, analytics, idempotency, audit, rate limiting, and shared concerns.
-- `backend/src/main/resources/db/migration/`: Flyway V1-V4 schema history.
-- `api/openapi.yaml`: canonical implemented product API contract and Swagger UI source; human approval remains pending.
-- `docs/`: requirements, architecture, scenarios, ADRs, risk, AI traceability, validation, and quality evidence.
-- `scripts/`: quality and safe build-time metadata generation.
+---
 
-Runtime flow: browser -> Angular/Nginx -> same-origin `/api` or `/r` proxy -> Spring Boot -> MySQL. Reviewer pages load only packaged, allowlisted JSON. They do not expose a runtime filesystem endpoint.
+## Technology Stack
 
-## Quick start with Docker Compose
+```text
+Frontend                    Backend                     Data
+────────                    ───────                     ────
+Angular 19.2                Java 21                     MySQL
+TypeScript 5.8              Spring Boot 3.5            Flyway
+Signals + RxJS              Spring Web                 JPA / Hibernate
+Bootstrap Icons             Spring Validation          JdbcTemplate
+                            Spring Data JPA
+                            Spring Actuator
+                            OpenAPI / Swagger
 
-Prerequisites: Docker Engine or Docker Desktop with Compose v2. From the checked-out repository root:
-
-```powershell
-Copy-Item .env.example .env
-docker compose up --build --detach --wait
+Quality                     Build / Tooling             AI
+───────                     ───────────────             ──
+JUnit                       Maven                       Codex
+Testcontainers              npm                         Specialized agents
+Jasmine / Karma             Docker                      Human approval gates
+Playwright
+axe-core
+ESLint
+JaCoCo
 ```
 
-macOS/Linux equivalent:
+---
+
+## System View
+
+```text
+┌─────────────────────────────── BROWSER ───────────────────────────────┐
+│                                                                      │
+│  Dashboard   Create URL   URL Management   Analytics   Project Review │
+│      │           │               │              │             │       │
+│      └───────────┴───────────────┴──────────────┴─────────────┘       │
+│                              Angular 19                               │
+└──────────────────────────────────┬───────────────────────────────────┘
+                                   │
+                          Typed REST / JSON
+                                   │
+                                   ▼
+┌──────────────────────────── SPRING BOOT ──────────────────────────────┐
+│                                                                      │
+│  UrlController       RedirectController       AnalyticsController    │
+│       │                     │                        │                 │
+│       ▼                     ▼                        ▼                 │
+│   UrlService          RedirectService          AnalyticsService      │
+│       │                     │                        │                 │
+│       └───────────────┬─────┴──────────────┬─────────┘                 │
+│                       │                    │                           │
+│         Reliability / Validation / Errors / Rate Limiting            │
+│                       │                    │                           │
+└───────────────────────┼────────────────────┼───────────────────────────┘
+                        │                    │
+                        ▼                    ▼
+                Spring Data JPA       JdbcTemplate queries
+                        │                    │
+                        └─────────┬──────────┘
+                                  ▼
+                         ┌────────────────┐
+                         │     MySQL      │
+                         │ shortened_url  │
+                         │ click_event    │
+                         │ idempotency    │
+                         └────────────────┘
+```
+
+
+I intentionally kept the backend as a **modular monolith**. URL management, redirect handling, and analytics have clear boundaries, but the current system does not benefit enough from separate deployments to justify distributed-system complexity.
+
+That gives me simple deployment and debugging today, while preserving logical boundaries that can be extracted later if scale requires it.
+
+---
+
+## What the Application Does
+
+| Capability | Implementation |
+|---|---|
+| Short URL creation | Generated short codes or custom aliases |
+| URL lifecycle | Enable, disable, expire, soft-delete |
+| Redirect | `GET /r/{shortCode}` with lifecycle validation |
+| Safe retries | `Idempotency-Key` support on create |
+| Concurrent updates | JPA `@Version` + HTTP `If-Match` / ETag |
+| Analytics | Summary, time series, referrers, devices, browsers, OS |
+| Abuse protection | Separate rate limits for create, redirect, management, analytics |
+| Error contract | Centralized structured API errors |
+| Observability | Correlation IDs, Actuator health/metrics |
+| Database evolution | Flyway migrations |
+| API review | OpenAPI / Swagger UI |
+| Frontend quality | Responsive Angular UI, centralized API errors, lazy-loaded pages |
+| Automated validation | JUnit, Testcontainers, Jasmine/Karma, Playwright, axe-core |
+
+---
+
+## Core Engineering
+
+| Capability | Implementation | Purpose |
+|---|---|---|
+| **Idempotency** | Request key + fingerprint | Prevent duplicate creation on retries |
+| **Concurrency** | JPA `@Version` + `If-Match` | Prevent lost updates |
+| **Rate Limiting** | Endpoint-specific limits | Protect APIs from excessive traffic |
+| **Data Integrity** | Validation + DB constraints | Enforce URL and uniqueness rules |
+| **Analytics Reliability** | Best-effort recording | Analytics failure does not break redirects |
+| **Schema Evolution** | Flyway | Version-controlled DB changes |
+| **Error Handling** | Global handler + Angular interceptor | Consistent errors across layers |
+| **Observability** | Correlation IDs | Trace requests across the application |
+
+### Rate Limiting
+
+```text
+                    Incoming Traffic
+                           │
+             ┌─────────────┼─────────────┐
+             ▼             ▼             ▼
+         Create URL    Management     Redirect
+             │             │             │
+          Stricter       Normal        Higher
+             │             │             │
+             └─────────────┼─────────────┘
+                           ▼
+                      Spring Boot
+```
+
+Rate limits are currently instance-local. Redis or gateway-level rate limiting becomes appropriate when multiple backend instances require shared coordination.
+
+### Concurrency Protection
+
+```text
+Client A reads V4 ──► updates ──► DB becomes V5
+Client B reads V4 ──► updates ──► REJECTED (stale)
+```
+
+Optimistic locking fits this workload because concurrent management updates are expected to be uncommon.
+
+---
+
+# Architecture
+
+## Request Path
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+<h3>Backend</h3>
+
+<pre><code>HTTP Request
+    │
+    ▼
+Controller
+    │
+    ▼
+Service
+    │
+    ▼
+Repository
+    │
+    ▼
+MySQL</code></pre>
+
+<strong>Responsibilities</strong>
+
+<ul>
+<li><strong>Controller</strong>: HTTP contract, headers, DTOs, status codes</li>
+<li><strong>Service</strong>: business rules and application behavior</li>
+<li><strong>Repository</strong>: persistence/query boundary</li>
+<li><strong>MySQL + Flyway</strong>: data and schema integrity</li>
+</ul>
+
+</td>
+<td width="50%" valign="top">
+
+<h3>Frontend</h3>
+
+<pre><code>Feature Page
+    │
+    ▼
+Typed API Service
+    │
+    ▼
+Angular HttpClient
+    │
+    ├── SUCCESS → Feature State / UI
+    │
+    └── ERROR
+          │
+          ▼
+API Error Interceptor
+          │
+          ▼
+FrontendApiError
+          │
+          ▼
+Consistent UI</code></pre>
+
+Frontend code is organized by <strong>feature</strong>, while application-wide infrastructure remains under <code>core</code>.
+
+</td>
+</tr>
+</table>
+
+---
+
+# API Map
+
+## URL Management
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/v1/urls` | Create a short URL |
+| `GET` | `/api/v1/urls` | Search, filter, sort, and paginate URLs |
+| `GET` | `/api/v1/urls/{urlId}` | Get URL details |
+| `PATCH` | `/api/v1/urls/{urlId}` | Update expiration using `If-Match` |
+| `POST` | `/api/v1/urls/{urlId}/enable` | Enable URL using `If-Match` |
+| `POST` | `/api/v1/urls/{urlId}/disable` | Disable URL using `If-Match` |
+| `DELETE` | `/api/v1/urls/{urlId}` | Soft-delete URL using `If-Match` |
+
+## Redirect
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/r/{shortCode}` | Redirect and record analytics |
+| `HEAD` | `/r/{shortCode}` | Resolve redirect without recording analytics |
+
+## Analytics
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/v1/urls/{id}/analytics/summary` | Click summary |
+| `GET` | `/api/v1/urls/{id}/analytics/timeseries` | Hour/day trend |
+| `GET` | `/api/v1/urls/{id}/analytics/referrers` | Top referrer hosts |
+| `GET` | `/api/v1/urls/{id}/analytics/devices` | Device, browser, and OS breakdown |
+
+---
+
+# Project Structure
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+<h3>Backend</h3>
+
+<pre><code>backend/
+├── src/main/java/.../
+│   ├── config/
+│   ├── controller/
+│   ├── dto/
+│   ├── entity/
+│   ├── exception/
+│   ├── repository/
+│   ├── service/
+│   └── util/
+│
+├── src/main/resources/
+│   ├── application.yml
+│   └── db/migration/
+│
+└── src/test/
+    ├── controller/
+    ├── repository/
+    ├── service/
+    └── integration tests</code></pre>
+
+</td>
+<td width="50%" valign="top">
+
+<h3>Frontend</h3>
+
+<pre><code>frontend/src/app/
+├── core/
+│   ├── api/
+│   ├── errors/
+│   ├── interceptors/
+│   ├── services/
+│   └── utils/
+│
+├── features/
+│   ├── dashboard/
+│   ├── create-url/
+│   ├── url-management/
+│   ├── analytics/
+│   └── project-review/
+│
+├── layout/
+├── shared/
+└── testing/</code></pre>
+
+</td>
+</tr>
+</table>
+
+---
+
+## AI-Assisted Engineering
+
+Each AI task was scoped with the **intent, relevant code context, constraints, and expected outcome**. Outputs were reviewed iteratively rather than accepted as one-shot generated solutions.
+
+I used Codex through specialized engineering roles:
+
+```text
+                         ┌─────────────────────┐
+                         │      ENGINEER       │
+                         │ Requirements / Scope│
+                         │ Architecture        │
+                         └──────────┬──────────┘
+                                    │
+              ┌─────────────────────┼─────────────────────┐
+              ▼                     ▼                     ▼
+      architecture-agent      backend-agent        frontend-agent
+              │                     │                     │
+              └─────────────────────┼─────────────────────┘
+                                    ▼
+                           Candidate Solution
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │   ENGINEER REVIEW   │
+                         └──────────┬──────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+                  ACCEPT          MODIFY          REJECT
+                    │               │
+                    └───────┬───────┘
+                            ▼
+                   Security + Quality Review
+                            │
+                            ▼
+                    Engineer Sign-Off
+```
+
+### Agents used
+
+| Agent | How I used it |
+|---|---|
+| `architecture-agent` | Architecture alternatives, boundaries, scalability, trade-offs |
+| `backend-agent` | Spring Boot APIs, persistence, reliability, refactoring |
+| `frontend-agent` | Angular implementation, API integration, responsive UI |
+| `security-review-agent` | Validation, exposure, error handling, abuse controls |
+| `testing-quality-agent` | Edge cases, regression risks, tests, quality gates |
+
+The agents did not autonomously decide what to build or approve each other's work. I remained the coordinator and final decision-maker.
+
+### AI decision traceability
+
+| AI Recommendation | My Decision | Reason |
+|---|---|---|
+| Split URL Management, Redirect, and Analytics into microservices | ❌ **Rejected** | Distributed-system complexity was not justified by current requirements |
+| Add Redis for shared caching / rate limiting | ⏳ **Deferred** | Appropriate after horizontal scaling, unnecessary infrastructure today |
+| Protect concurrent URL updates | ✅ **Accepted + Refined** | I selected `@Version` + `If-Match` based on low expected contention |
+| Add idempotency to URL creation | ✅ **Accepted + Validated** | Solves a real retry problem and was verified through replay/conflict behavior |
+| Add more generic abstractions/components | 🔧 **Modified / Rejected** | Removed complexity that did not improve reuse, testability, or clarity |
+
+> **AI proposed options. I evaluated the trade-offs. Tests and review validated the result.**
+
+---
+
+## Engineering Scenarios
+
+### 🌱 Greenfield: Build the URL Shortener
+
+The initial requirement was decomposed before implementation:
+
+```text
+Requirement
+    ↓
+Architecture
+    ↓
+Domain + Database
+    ↓
+Core APIs
+    ↓
+Frontend Integration
+    ↓
+Reliability Features
+    ↓
+Testing + Review
+```
+
+The key point was not generating individual files. It was defining the right boundaries, sequencing the work, and validating the integrated system.
+
+### 🔧 Brownfield: Add Idempotency
+
+URL creation already worked. Idempotency was introduced as a reliability enhancement without breaking existing behavior.
+
+Affected areas included:
+
+```text
+API Contract
+Service Logic
+Persistence
+Flyway Migration
+Frontend Requests
+Replay / Conflict Handling
+Regression Tests
+```
+
+This required codebase reasoning across an existing working flow rather than implementing an isolated feature.
+
+### ❓ Ambiguous Requirement: Analytics Failure
+
+The requirement said to track analytics when a short URL is used, but it did not define what happens if analytics storage fails.
+
+I chose:
+
+```text
+Primary capability   = Redirect
+Secondary capability = Analytics
+```
+
+Therefore analytics recording is best-effort. A secondary failure should not unnecessarily make a valid short URL unavailable.
+
+---
+
+## Validation and Security
+
+AI-assisted code was treated as **candidate code**, not approved code.
+
+```text
+AI-Assisted Change
+        ↓
+Engineer Review
+        ↓
+Build / Static Checks
+        ↓
+Unit Tests
+        ↓
+Integration Tests
+        ↓
+E2E Validation
+        ↓
+Engineer Sign-Off
+```
+
+### Quality gates
+
+**Backend**
+
+- JUnit
+- Spring Boot tests
+- repository tests
+- Testcontainers with MySQL
+- JaCoCo
+
+**Frontend**
+
+- Angular unit tests
+- TypeScript checks
+- ESLint
+- Playwright
+- axe-core
+- manual responsive review
+
+### Security boundary
+
+Security controls include validation, rate limiting, CORS, controlled error exposure, database constraints, bounded requests, and correlation IDs.
+
+A complete authentication/authorization model is outside the current prototype scope. For a public multi-user deployment, management and analytics APIs would need Spring Security with OAuth 2.0 / OIDC and appropriate authorization rules.
+
+---
+
+## Containerization
+
+Both frontend and backend use multi-stage Docker builds.
+
+| Frontend | Backend |
+|---|---|
+| Node 20 Alpine build stage | Maven build stage |
+| Angular production build | Spring Boot JAR build |
+| `nginx-unprivileged` runtime | Java 21 runtime |
+| Non-root runtime + health check | Build tooling excluded from runtime image |
+
+```text
+Frontend                              Backend
+────────                              ───────
+Node 20 Build                         Maven Build
+     │                                     │
+     ▼                                     ▼
+Angular Build                         Spring Boot JAR
+     │                                     │
+     ▼                                     ▼
+Unprivileged Nginx                    Java 21 Runtime
+```
+
+**Flyway** remains responsible for version-controlled database schema evolution.
+
+---
+
+## Deployment & Live Application
+
+```text
+User
+ │
+ ▼
+Angular Frontend
+Render - Static Web Service
+ │
+ ▼
+Spring Boot Backend
+Render - Web Service
+ │
+ ▼
+MySQL Database
+Aiven
+```
+
+| Component | Hosting |
+|---|---|
+| **Frontend** | Static web service on Render |
+| **Backend** | Web service on Render |
+| **Database** | MySQL hosted on Aiven |
+
+
+Render and Aiven are third-party services used to host the assessment environment.
+
+---
+
+## Trade-offs & Limitations
+
+| Current Decision | Trade-off / Evolution |
+|---|---|
+| **Modular monolith** | Simpler deployment today; services can be extracted if independent scaling becomes necessary |
+| **Instance-local rate limiting** | Appropriate for current deployment; Redis or gateway coordination is needed for multiple instances |
+| **Best-effort analytics** | Redirect availability is prioritized over guaranteed analytics delivery |
+| **Optimistic locking** | Fits low-contention management operations |
+| **No authentication/authorization** | Acceptable for assessment scope; public multi-user deployment would require OAuth 2.0 / OIDC |
+
+---
+
+## Architecture Evolution
+
+Current architecture:
+
+```text
+Angular
+   ↓
+Spring Boot Modular Monolith
+   ↓
+MySQL
+```
+
+Possible evolution only when real requirements justify it:
+
+```text
+                     API Gateway
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+   URL Management      Redirect       Analytics
+                          │               ▲
+                          ▼               │
+                       Redis         Event Pipeline
+                          │               │
+                          └───────────────┘
+```
+
+The future architecture is not automatically better. It becomes appropriate only when independent scaling, distributed coordination, or workload characteristics justify the additional complexity.
+
+---
+
+## Setup Instructions
+
+**Prerequisites:** JDK 21 · Maven 3.9+ · Node.js 20+ · npm · MySQL
+
+### Database
+
+```sql
+CREATE DATABASE url_shortener;
+```
+
+Configure using `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, and `DB_PASSWORD`.
+
+### Backend
 
 ```bash
-cp .env.example .env
-docker compose up --build --detach --wait
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-Open:
+Runs on `http://localhost:8080`. Flyway migrations execute automatically at startup.
 
-- Application: <http://localhost:4200>
-- Engineering Review: <http://localhost:4200/engineering-review>
-- Production Readiness: <http://localhost:4200/production-readiness>
-- Production Applications: <http://localhost:4200/production-applications>
-- Swagger UI: <http://localhost:4200/swagger-ui/index.html>
-- OpenAPI YAML: <http://localhost:4200/openapi.yaml>
-- Aggregate health: <http://localhost:4200/actuator/health>
+### Frontend
 
-Inspect state with `docker compose ps` and `docker compose logs --tail 200`. Stop containers with `docker compose down`. Add `--volumes` only when you intentionally want to delete the local MySQL data volume.
-
-The defaults in `.env.example` are local-only. Replace passwords before any shared deployment and never commit `.env`.
-
-## Local development without containers
-
-Prerequisites:
-
-- JDK 21 and Maven 3.9+
-- Node.js 20 and npm
-- MySQL 8.4 reachable locally
-- Chrome for the configured Karma and Playwright jobs
-
-Create a MySQL schema and least-privilege local user matching the defaults in `backend/src/main/resources/application.yml`, or export `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, and `DB_PASSWORD` for your environment. Then use separate terminals:
-
-```powershell
-mvn -f backend/pom.xml spring-boot:run
+```bash
+cd frontend
+npm install
+npm start
 ```
 
-```powershell
-Set-Location frontend
-npm ci
-npm run start
+Runs on `http://localhost:4200` and proxies API requests to the local backend.
+
+---
+
+## Final Takeaway
+
+This project demonstrates both full-stack engineering and controlled AI-assisted execution.
+
+```text
+I define the requirement
+        ↓
+AI accelerates analysis / implementation
+        ↓
+I review and challenge the output
+        ↓
+I accept / modify / reject
+        ↓
+Automated + manual validation
+        ↓
+I own the final result
 ```
 
-Angular listens on <http://localhost:4200> and proxies API, redirect, health, OpenAPI, and Swagger paths to <http://localhost:8080>. Flyway applies V1-V4 automatically before JPA validates the schema.
+**Codex was an engineering accelerator, not the architect or decision-maker.**
 
-Regenerate the safe reviewer snapshot after relevant docs or repository structure changes:
-
-```powershell
-./scripts/generate-project-metadata.ps1
-```
-
-The script has no path parameter. It starts at the repository root, reads fixed allowlisted roots, emits relative names only, caps traversal depth/children, and excludes Git metadata, dependencies, outputs, environment files, and credential/key-like names.
-
-## Validation commands
-
-Backend:
-
-```powershell
-mvn -B -f backend/pom.xml verify
-```
-
-Frontend:
-
-```powershell
-Set-Location frontend
-npm ci
-npm run typecheck
-npm run lint
-npm run test:coverage
-npm run build
-npm run e2e:browser
-```
-
-The full-stack suite runs only against a live Angular/Spring/MySQL stack:
-
-```powershell
-$env:E2E_FULL_STACK='true'
-npm run e2e:full-stack
-```
-
-Do not treat skipped Testcontainers tests, unavailable Docker, or an unexecuted CI workflow as a pass. Machine-readable quality files live under `docs/quality/`.
-
-## Demo path
-
-Use [docs/DEMO-GUIDE.md](docs/DEMO-GUIDE.md) for a short reviewer walkthrough. The recommended path is Dashboard -> Create URL -> Management/Details -> Redirect -> Analytics -> Engineering Review -> Production Readiness -> Production Applications empty state.
-
-## Final review artifacts
-
-- [Final engineering summary](docs/FINAL-ENGINEERING-SUMMARY.md)
-- [Final status and directory tree](docs/FINAL-STATUS.md)
-- [Security review](docs/FINAL-SECURITY-REVIEW.md)
-- [Code review](docs/FINAL-CODE-REVIEW.md)
-- [Simplification review](docs/FINAL-SIMPLIFICATION-REVIEW.md)
-- [Defect summary](docs/DEFECT-SUMMARY.md)
-- [Production-readiness assessment](docs/PRODUCTION-READINESS-ASSESSMENT.md)
-- [Production evolution](docs/PRODUCTION-EVOLUTION.md)
-- [Prompt 10 validation](docs/validation/PROMPT-10-FINAL-VALIDATION.md)
-- [Interview talking points](docs/FINAL-INTERVIEW-TALKING-POINTS.md)
-
-## Known limitations and security boundary
-
-- No authentication, authorization, ownership, or accountable actor exists for management and analytics APIs. Keep the prototype on a controlled network.
-- URL shortening can enable phishing/open-redirect abuse; moderation, reputation, takedown, and abuse operations are absent.
-- Dependency evidence is contradictory: clean `npm ci` reports 29 findings, while immediate explicit production-only and full-tree audits report zero. Security remains `FAIL` until the toolchain/advisory result is reconciled.
-- MySQL is a single dependency. Backups, restore, failover, disaster recovery, capacity, SLOs, and rollback are not production-validated.
-- Cache and rate limits are process-local; cache is disabled by default and no Redis behavior is claimed.
-- Analytics is privacy-minimized and best effort. It does not claim unique users or complete delivery.
-- Swagger/metrics are appropriate only for the controlled prototype and must be protected or disabled for public deployment.
-- Automated accessibility checks are not certification; manual screen-reader and non-Chrome validation remain `NOT_RUN`.
-- Portfolio content remains `REQUIRES_HUMAN_INPUT`; no employer, customer, production metric, or link claim was invented.
-
-See [docs/LIMITATIONS.md](docs/LIMITATIONS.md), [docs/RISK-REGISTER.md](docs/RISK-REGISTER.md), and [docs/HUMAN-APPROVAL-GATES.md](docs/HUMAN-APPROVAL-GATES.md) for the complete boundary.
-
-## Troubleshooting
-
-- Port conflict: change `FRONTEND_PORT`, `BACKEND_PORT`, or `MYSQL_PORT` in `.env`, then restart Compose.
-- MySQL unhealthy: run `docker compose logs db`; verify the volume is writable and passwords are consistent. Do not delete the volume unless local data loss is intended.
-- Backend unhealthy: run `docker compose logs backend`; common causes are database startup, credential mismatch, or Flyway validation failure.
-- Frontend loads but API calls fail: check `docker compose ps`, then request `/actuator/health` through port 4200 to verify the proxy path.
-- Metadata page fails: rerun `./scripts/generate-project-metadata.ps1`, rebuild the frontend, and confirm the two JSON files exist under `frontend/public/assets/engineering/`.
-- Testcontainers skipped: start a compatible Docker daemon and rerun Maven verify; the suite deliberately reports `NOT_RUN` rather than faking database evidence.
-- Dependency audit change: preserve the command/tool/date in validation evidence, review new findings, and do not force a major upgrade without compatibility and regression review.
+Architecture, complexity, trade-offs, security decisions, code acceptance, validation strategy, and final sign-off remained engineer-owned. Known limitations were intentionally documented rather than hidden or solved through unnecessary complexity.
