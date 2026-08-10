@@ -79,7 +79,7 @@ export class UrlTableComponent {
   }
 
   protected canDisable(url: UrlResponse): boolean {
-    return url.status === 'ACTIVE';
+     return url.status === 'ACTIVE' && !url.expired;
   }
 
   protected canDelete(url: UrlResponse): boolean {

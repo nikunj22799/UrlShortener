@@ -41,66 +41,10 @@
         A focused full-stack application for creating, managing,
         redirecting, and analyzing shortened URLs.
       </p>
+      <p>It combines an Angular frontend with a Java/Spring Boot backend and MySQL database, with features such as URL lifecycle management, analytics, idempotency, concurrency protection, rate limiting, validation, and observability. The application uses a modular monolith architecture to keep the solution simple and maintainable, while AI-assisted development was used throughout the engineering process under developer review and decision-making.</p>
     </div>
   </div>
 
-  <div class="capability-grid">
-    <article class="capability-card">
-      <span class="capability-icon">
-        <i class="bi bi-link-45deg" aria-hidden="true"></i>
-      </span>
-
-      <div>
-        <h3>URL Lifecycle</h3>
-        <p>
-          Create, enable, disable, expire, redirect, and soft-delete
-          shortened URLs.
-        </p>
-      </div>
-    </article>
-
-    <article class="capability-card">
-      <span class="capability-icon">
-        <i class="bi bi-shield-check" aria-hidden="true"></i>
-      </span>
-
-      <div>
-        <h3>Reliable Backend</h3>
-        <p>
-          Idempotency, optimistic locking, rate limiting,
-          structured errors, and validation.
-        </p>
-      </div>
-    </article>
-
-    <article class="capability-card">
-      <span class="capability-icon">
-        <i class="bi bi-bar-chart" aria-hidden="true"></i>
-      </span>
-
-      <div>
-        <h3>Analytics</h3>
-        <p>
-          Redirect counts, traffic trends, referrers,
-          devices, browsers, and operating systems.
-        </p>
-      </div>
-    </article>
-
-    <article class="capability-card">
-      <span class="capability-icon">
-        <i class="bi bi-diagram-3" aria-hidden="true"></i>
-      </span>
-
-      <div>
-        <h3>Simple Architecture</h3>
-        <p>
-          A modular monolith with clear frontend and backend
-          boundaries without unnecessary infrastructure.
-        </p>
-      </div>
-    </article>
-  </div>
 </section>
 
 <section class="review-section">
@@ -164,15 +108,6 @@
     </article>
   </div>
 
-  <div class="architecture-note">
-    <strong>Why a modular monolith?</strong>
-
-    <p>
-      The project does not require distributed services, messaging,
-      or multiple deployment units. Keeping the architecture simple
-      reduces operational complexity while preserving clear module boundaries.
-    </p>
-  </div>
 </section>
 
 <section class="review-section">
@@ -481,32 +416,123 @@
     </article>
   </div>
 
-  <div class="ai-decision-strip">
-    <span>
-      <i class="bi bi-x-circle" aria-hidden="true"></i>
-      Microservices rejected
-    </span>
+  <div class="ai-decisions-intro">
+  <span>
+    <i class="bi bi-lightbulb" aria-hidden="true"></i>
+  </span>
 
-    <span>
-      <i class="bi bi-clock-history" aria-hidden="true"></i>
-      Redis deferred
-    </span>
+  <p>
+    AI recommendations were reviewed against the project scope,
+    architecture, and complexity before being accepted, refined,
+    deferred, or rejected.
+  </p>
+</div>
 
-    <span>
-      <i class="bi bi-check-circle" aria-hidden="true"></i>
-      Concurrency refined
-    </span>
+  <div class="ai-decision-grid">
+  <article class="ai-decision-card ai-decision-card--rejected">
+    <div class="ai-decision-card__header">
+      <span class="ai-decision-card__icon">
+        <i class="bi bi-x-circle" aria-hidden="true"></i>
+      </span>
 
-    <span>
-      <i class="bi bi-check-circle" aria-hidden="true"></i>
-      Idempotency validated
-    </span>
+      <div>
+        <span class="ai-decision-card__status">Rejected</span>
+        <h3>Microservices</h3>
+      </div>
+    </div>
 
-    <span>
-      <i class="bi bi-sliders" aria-hidden="true"></i>
-      Extra abstractions simplified
-    </span>
-  </div>
+    <p>
+      AI suggested separating URL Management, Redirect, and Analytics
+      into independent services. I rejected this because the project
+      does not require independent scaling or deployment, and the added
+      distributed-system complexity was not justified.
+    </p>
+  </article>
+
+  <article class="ai-decision-card ai-decision-card--deferred">
+    <div class="ai-decision-card__header">
+      <span class="ai-decision-card__icon">
+        <i class="bi bi-clock-history" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="ai-decision-card__status">Deferred</span>
+        <h3>Redis</h3>
+      </div>
+    </div>
+
+    <p>
+      Redis was considered for distributed rate limiting and caching.
+      I deferred it because the current deployment does not require
+      shared state across multiple backend instances.
+    </p>
+  </article>
+
+  <article class="ai-decision-card ai-decision-card--refined">
+    <div class="ai-decision-card__header">
+      <span class="ai-decision-card__icon">
+        <i class="bi bi-layers" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="ai-decision-card__status">
+          Accepted + Refined
+        </span>
+        <h3>Concurrency Protection</h3>
+      </div>
+    </div>
+
+    <p>
+      AI identified the risk of concurrent updates. I refined the
+      solution by choosing optimistic locking with
+      <code>&#64;Version</code> and <code>If-Match</code>, which fits the
+      expected low-contention workload.
+    </p>
+  </article>
+
+  <article class="ai-decision-card ai-decision-card--validated">
+    <div class="ai-decision-card__header">
+      <span class="ai-decision-card__icon">
+        <i class="bi bi-check-circle" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="ai-decision-card__status">
+          Accepted + Validated
+        </span>
+        <h3>Idempotency</h3>
+      </div>
+    </div>
+
+    <p>
+      AI suggested protecting URL creation from duplicate requests.
+      I accepted the approach after validating replay behavior,
+      request fingerprinting, conflict handling, and persistence.
+    </p>
+  </article>
+
+  <article class="ai-decision-card ai-decision-card--simplified">
+    <div class="ai-decision-card__header">
+      <span class="ai-decision-card__icon">
+        <i class="bi bi-sliders" aria-hidden="true"></i>
+      </span>
+
+      <div>
+        <span class="ai-decision-card__status">
+          Modified / Rejected
+        </span>
+        <h3>Extra Abstractions</h3>
+      </div>
+    </div>
+
+    <p>
+      Some suggested abstractions increased indirection and code
+      complexity without enough benefit. I kept the useful parts and
+      removed unnecessary layers to keep the codebase simple and
+      maintainable.
+    </p>
+  </article>
+</div>
 </section>
 
 <section class="review-section">

@@ -354,7 +354,7 @@
 
         @if (currentUrl.status !== 'DELETED') {
           <div class="lifecycle-actions">
-            @if (currentUrl.status === 'ACTIVE') {
+            @if (currentUrl.status === 'ACTIVE' && !currentUrl.expired) {
               <button
                 class="lifecycle-action"
                 type="button"
@@ -376,7 +376,7 @@
                 </span>
               </button>
             } @else if (
-              currentUrl.status === 'DISABLED'
+              currentUrl.status === 'DISABLED' && !currentUrl.expired
             ) {
               <button
                 class="lifecycle-action"
